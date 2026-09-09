@@ -1,0 +1,16 @@
+node_modules/
+.vercel
+.DS_Store
+Thumbs.db
+*.log
+
+# sample media / exports — don't commit videos
+*.mp4
+*.webm
+*.mkv
+*.mov
+*.m4v
+*.avi
+*.mp3
+*.wav
+*.m4a

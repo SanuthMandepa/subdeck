@@ -398,7 +398,7 @@ const S = {
   cues:[], sel:-1,
   peaks:null, audio:null,
   zoom:0, view:0,
-  recording:false, transcribing:false, cancelASR:false,
+  recording:false, transcribing:false, cancelASR:false, cancelExport:false,
   style:{ ...DEFAULT_STYLE, palette:[...DEFAULT_STYLE.palette] }
 };
 
@@ -1452,6 +1452,21 @@ $('#btnAsrCancel').onclick = () => {
 /* =====================================================================
    BURN-IN EXPORT
    ===================================================================== */
+/* Two engines.
+
+   PRECISE (WebCodecs): steps the video frame by frame, stamps every frame
+   with an exact presentation time, and encodes the audio independently from
+   the decoded PCM. Because neither track depends on wall-clock timing, the
+   result cannot drift — and it is not bound to real time, so a slow machine
+   produces a correct file rather than a stuttering, out-of-sync one.
+
+   REAL-TIME (MediaRecorder): the fallback for browsers without WebCodecs.
+   It samples a live canvas, so any hitch while drawing drops frames and the
+   audio, which keeps running, ends up ahead of the picture. */
+const hasWebCodecs = () =>
+  typeof VideoEncoder !== 'undefined' && typeof VideoFrame !== 'undefined' &&
+  typeof AudioEncoder !== 'undefined' && typeof AudioData !== 'undefined';
+
 function pickMime(){
   return [
     'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
@@ -1463,108 +1478,261 @@ function pickMime(){
   ].find(t => { try{ return MediaRecorder.isTypeSupported(t); }catch(_){ return false; } }) || '';
 }
 
+function exportDims(scalePct){
+  return {
+    W: Math.max(2, Math.round(canvas.width  * scalePct/100 / 2)*2),
+    H: Math.max(2, Math.round(canvas.height * scalePct/100 / 2)*2)
+  };
+}
+const idle = () => new Promise(r => setTimeout(r, 0));
+
+async function pickAvc(W, H, fps, bitrate){
+  for(const codec of ['avc1.640034','avc1.640028','avc1.4d4028','avc1.42e01f','avc1.42001f']){
+    const cfg = { codec, width:W, height:H, bitrate, framerate:fps, avc:{ format:'avc' } };
+    try{
+      const s = await VideoEncoder.isConfigSupported(cfg);
+      if(s.supported) return s.config || cfg;
+    }catch(_){}
+  }
+  return null;
+}
+
+/* S.audio is 16 kHz mono — fine for Whisper, not for an export. */
+async function decodeFullAudio(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const ab = await ctx.decodeAudioData(await S.file.arrayBuffer());
+    ctx.close();
+    return ab;
+  }catch(err){ console.warn('export audio decode', err); return null; }
+}
+
 let recorder = null, recStop = null;
 
-async function burnIn(scalePct, quality){
-  if(!S.ready) return toast('Load a video first', true);
-  if(S.recording || S.transcribing) return;
-  if(typeof MediaRecorder === 'undefined') return toast('This browser has no MediaRecorder', true);
+async function burnPrecise(scalePct, bitrate, fps, ox, off, W, H){
+  const { Muxer, ArrayBufferTarget } =
+    await import('https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.mjs');
+
+  const vcfg = await pickAvc(W, H, fps, bitrate);
+  if(!vcfg) throw new Error('no supported H.264 encoder configuration at ' + W + '×' + H);
+
+  setStatus(true, 'decoding audio', null, 'reading the original audio track…', true, true);
+  const ab = await decodeFullAudio();
+
+  let acfg = null, nCh = 0;
+  if(ab){
+    nCh = Math.min(2, ab.numberOfChannels);
+    const probe = { codec:'mp4a.40.2', sampleRate:ab.sampleRate, numberOfChannels:nCh, bitrate:160000 };
+    try{ if((await AudioEncoder.isConfigSupported(probe)).supported) acfg = probe; }catch(_){}
+  }
+
+  const target = new ArrayBufferTarget();
+  const muxer = new Muxer({
+    target,
+    video: { codec:'avc', width:W, height:H, frameRate:fps },
+    ...(acfg ? { audio:{ codec:'aac', numberOfChannels:nCh, sampleRate:ab.sampleRate } } : {}),
+    fastStart: 'in-memory'
+  });
+
+  let encErr = null;
+  const venc = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: e => { encErr = e; }
+  });
+  venc.configure(vcfg);
+
+  /* audio first — it is quick, and the muxer interleaves for us */
+  if(acfg){
+    setStatus(true, 'encoding audio', null, `${nCh} ch · ${ab.sampleRate} Hz · aac`, true, true);
+    const aenc = new AudioEncoder({
+      output: (chunk, meta) => muxer.addAudioChunk(chunk, meta),
+      error: e => { encErr = e; }
+    });
+    aenc.configure(acfg);
+    const chans = [];
+    for(let c=0;c<nCh;c++) chans.push(ab.getChannelData(c));
+    const STEP = 1024 * 20;
+    for(let o=0; o<ab.length; o+=STEP){
+      if(S.cancelExport || encErr) break;
+      const len = Math.min(STEP, ab.length - o);
+      const planar = new Float32Array(len * nCh);
+      for(let c=0;c<nCh;c++) planar.set(chans[c].subarray(o, o+len), c*len);
+      const data = new AudioData({
+        format:'f32-planar', sampleRate:ab.sampleRate, numberOfChannels:nCh,
+        numberOfFrames:len, timestamp:Math.round(o/ab.sampleRate*1e6), data:planar
+      });
+      aenc.encode(data); data.close();
+      if(aenc.encodeQueueSize > 24) await idle();
+    }
+    await aenc.flush();
+    aenc.close();
+  }
+  if(encErr) throw encErr;
+
+  /* now the picture, one exact frame at a time */
+  const totalFrames = Math.max(1, Math.round(S.dur * fps));
+  const gop = Math.max(1, Math.round(fps * 3));
+  const t0 = performance.now();
+  let done = 0;
+
+  video.pause();
+  for(let i=0; i<totalFrames; i++){
+    if(S.cancelExport || encErr) break;
+    const t = Math.min(Math.max(0, S.dur - 0.0005), i/fps);
+    await seekTo(t);
+    drawFrame(ox, W, H, t);
+    const frame = new VideoFrame(off, {
+      timestamp: Math.round(i * 1e6 / fps),
+      duration: Math.round(1e6 / fps)
+    });
+    venc.encode(frame, { keyFrame: i % gop === 0 });
+    frame.close();
+    done = i + 1;
+
+    while(venc.encodeQueueSize > 8 && !encErr) await idle();
+
+    if(i % 4 === 0){
+      const el = (performance.now() - t0)/1000;
+      const rate = done/Math.max(0.001, el);
+      const left = (totalFrames - done)/Math.max(0.001, rate);
+      setStatus(true, 'encoding · precise', done/totalFrames*100,
+        `frame ${done} / ${totalFrames} · ${(rate/fps).toFixed(2)}× real time · ~${tc(left,'.',false)} left`,
+        true, true);
+      $('#tcNow').textContent = tc(t);
+    }
+  }
+
+  if(encErr) throw encErr;
+  // finalize() needs at least one chunk to have set the decoder config,
+  // otherwise it dies on a null colorSpace rather than saying what is wrong.
+  if(!done){
+    try{ venc.close(); }catch(_){}
+    throw new Error(S.cancelExport ? 'cancelled before any frame was encoded' : 'no frames were encoded');
+  }
+
+  setStatus(true, 'finalising', 100, 'writing the MP4…', false, true);
+  await venc.flush();
+  venc.close();
+  muxer.finalize();
+
+  const blob = new Blob([target.buffer], { type:'video/mp4' });
+  const partial = S.cancelExport && done < totalFrames;
+  download(`${baseName()}-subtitled${partial ? '-partial' : ''}.mp4`, blob);
+  toast(`${partial ? 'Stopped early — saved' : 'Saved'} ${baseName()}-subtitled${partial?'-partial':''}.mp4 · ` +
+        `${(blob.size/1048576).toFixed(1)} MB${acfg ? '' : ' · NO audio'}`);
+}
+
+async function burnRealtime(scalePct, bitrate, ox, off, W, H){
   const mime = pickMime();
-  if(!mime) return toast('This browser cannot record video — try Chrome or Edge', true);
-  if(!S.cues.length && !confirm('There are no cues — export the video with no captions anyway?')) return;
+  if(!mime) throw new Error('this browser can neither encode nor record video');
+
+  buildAudioGraph();
+  if(actx && actx.state === 'suspended'){ try{ await actx.resume(); }catch(_){} }
+
+  video.pause();
+  video.playbackRate = 1;
+  await seekTo(0);
+  drawFrame(ox, W, H, 0);          // never capture a blank first frame
+
+  const stream = off.captureStream(30);
+  if(!stream.getVideoTracks().length) throw new Error('the canvas produced no video track');
+
+  let audioTracks = streamDest ? streamDest.stream.getAudioTracks() : [];
+  if(!audioTracks.length && video.captureStream){
+    try{ audioTracks = video.captureStream().getAudioTracks(); }catch(_){}
+  }
+  audioTracks.forEach(t => stream.addTrack(t));
 
   const chunks = [];
-  let raf = 0, guard = 0, stopped = false;
+  let raf = 0, guard = 0, stopped = false, lastUI = 0;
+  recorder = new MediaRecorder(stream, { mimeType:mime, videoBitsPerSecond:bitrate });
+  recorder.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+
+  const finished = new Promise((res, rej) => {
+    recorder.onstop = res;
+    recorder.onerror = ev => rej(new Error('recorder error: ' + (ev.error?.name || 'unknown')));
+  });
+
+  setStatus(true, 'recording · real time', 0,
+    `${W}×${H} · ${audioTracks.length ? 'with audio' : 'NO audio track'} · keep this tab visible`, true, true);
+
+  const paint = () => {
+    if(stopped) return;
+    drawFrame(ox, W, H, video.currentTime);
+    const now = performance.now();
+    if(now - lastUI > 200){                       // don't touch the DOM every frame
+      lastUI = now;
+      setStatus(true, undefined, isFinite(S.dur) && S.dur ? video.currentTime/S.dur*100 : null, undefined, true, true);
+      $('#tcNow').textContent = tc(video.currentTime);
+    }
+  };
+  const pump = () => { if(stopped) return; paint(); raf = requestAnimationFrame(pump); };
+
+  recStop = () => {
+    if(stopped) return;
+    stopped = true;
+    cancelAnimationFrame(raf); clearInterval(guard);
+    try{ video.pause(); }catch(_){}
+    try{ if(recorder.state !== 'inactive') recorder.stop(); }catch(_){}
+  };
+  video.addEventListener('ended', recStop, { once:true });
+
+  // rAF is throttled in a background tab and some files never fire `ended`,
+  // so this keeps frames moving and guarantees the run terminates.
+  let stall = 0, lastT = -1;
+  guard = setInterval(() => {
+    if(stopped) return;
+    paint();
+    if(S.cancelExport) return recStop();
+    if(video.paused) video.play().catch(()=>{});
+    if(isFinite(S.dur) && S.dur && video.currentTime >= S.dur - 0.06) return recStop();
+    stall = Math.abs(video.currentTime - lastT) < 0.001 ? stall + 1 : 0;
+    lastT = video.currentTime;
+    if(stall > 40) recStop();                     // ~10 s with no progress
+  }, 250);
+
+  recorder.start(1000);
+  await video.play();
+  pump();
+  await finished;
+  video.removeEventListener('ended', recStop);
+  stopped = true;
+  cancelAnimationFrame(raf); clearInterval(guard);
+
+  if(!chunks.length) throw new Error('the recorder produced no data');
+  const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
+  const blob = new Blob(chunks, { type:mime.split(';')[0] });
+  download(`${baseName()}-subtitled.${ext}`, blob);
+  toast(`Saved ${baseName()}-subtitled.${ext} · ${(blob.size/1048576).toFixed(1)} MB`);
+}
+
+async function burnIn(scalePct, bitrate, fps, engine){
+  if(!S.ready) return toast('Load a video first', true);
+  if(S.recording || S.transcribing) return;
+  if(!isFinite(S.dur) || S.dur <= 0) return toast('This file reports no duration, so it cannot be re-encoded', true);
+  if(!S.cues.length && !confirm('There are no cues — export the video with no captions anyway?')) return;
+
+  const precise = engine === 'precise' && hasWebCodecs();
+  const { W, H } = exportDims(scalePct);
+  const off = document.createElement('canvas');
+  off.width = W; off.height = H;
+  const ox = off.getContext('2d', { alpha:false });
+
+  S.recording = true; S.cancelExport = false;
+  $('#burnBtn').disabled = true;
+  switchTab('cues');
+  setStatus(true, 'preparing', null, '', true, true);
 
   try{
-    S.recording = true;
-    $('#burnBtn').disabled = true;
-    switchTab('cues');
-    setStatus(true, 'preparing', 0, 'seeking to the start…', true, true);
-
-    buildAudioGraph();
-    if(actx && actx.state === 'suspended'){ try{ await actx.resume(); }catch(_){} }
-
-    const W = Math.max(2, Math.round(canvas.width  * scalePct/100 / 2)*2);
-    const H = Math.max(2, Math.round(canvas.height * scalePct/100 / 2)*2);
-    const off = document.createElement('canvas');
-    off.width = W; off.height = H;
-    const ox = off.getContext('2d', { alpha:false });
-
-    // make sure the very first captured frame is real, not blank
-    video.pause();
-    video.playbackRate = 1;
-    await seekTo(0);
-    drawFrame(ox, W, H, 0);
-
-    const stream = off.captureStream(30);
-    if(!stream.getVideoTracks().length) throw new Error('the canvas produced no video track');
-
-    let audioTracks = streamDest ? streamDest.stream.getAudioTracks() : [];
-    if(!audioTracks.length && video.captureStream){
-      try{ audioTracks = video.captureStream().getAudioTracks(); }catch(_){}
-    }
-    audioTracks.forEach(t => stream.addTrack(t));
-
-    recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: quality });
-    recorder.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
-
-    const finished = new Promise((res, rej) => {
-      recorder.onstop = res;
-      recorder.onerror = ev => rej(new Error('recorder error: ' + (ev.error?.name || 'unknown')));
-    });
-
-    setStatus(true, 'rendering · real time', 0,
-      `${W}×${H} · ${audioTracks.length ? 'with audio' : 'NO audio track'} · ${mime.split(';')[0]}`, true, true);
-
-    const paint = () => {
-      if(stopped) return;
-      drawFrame(ox, W, H, video.currentTime);
-      setStatus(true, undefined, S.dur ? video.currentTime/S.dur*100 : 0, undefined, true, true);
-      $('#tcNow').textContent = tc(video.currentTime);
-    };
-    const pump = () => { if(stopped) return; paint(); raf = requestAnimationFrame(pump); };
-
-    recStop = () => {
-      if(stopped) return;
-      stopped = true;
-      cancelAnimationFrame(raf);
-      clearInterval(guard);
-      try{ video.pause(); }catch(_){}
-      try{ if(recorder.state !== 'inactive') recorder.stop(); }catch(_){}
-    };
-    video.addEventListener('ended', recStop, { once:true });
-
-    // Backstop: rAF is throttled hard in a background tab, and some files
-    // never fire `ended`. This keeps frames moving and guarantees a stop.
-    guard = setInterval(() => {
-      if(stopped) return;
-      paint();
-      if(video.paused && !stopped) video.play().catch(()=>{});
-      if(S.dur && video.currentTime >= S.dur - 0.06) recStop();
-    }, 250);
-
-    recorder.start(1000);
-    await video.play();
-    pump();
-    await finished;
-    video.removeEventListener('ended', recStop);
-
-    if(!chunks.length) throw new Error('the recorder produced no data');
-    const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
-    const blob = new Blob(chunks, { type: mime.split(';')[0] });
-    download(`${baseName()}-subtitled.${ext}`, blob);
-    toast(`Saved ${baseName()}-subtitled.${ext} · ${(blob.size/1048576).toFixed(1)} MB`);
+    if(precise) await burnPrecise(scalePct, bitrate, fps, ox, off, W, H);
+    else        await burnRealtime(scalePct, bitrate, ox, off, W, H);
   }catch(err){
-    console.error('burn-in', err);
+    console.error('export', err);
     toast('Export failed: ' + (err.message || err), true);
   }finally{
-    stopped = true;
-    cancelAnimationFrame(raf);
-    clearInterval(guard);
     try{ if(recorder && recorder.state !== 'inactive') recorder.stop(); }catch(_){}
     recorder = null; recStop = null;
-    S.recording = false;
+    S.recording = false; S.cancelExport = false;
     try{ video.pause(); }catch(_){}
     video.playbackRate = +$('#rate').value;
     $('#burnBtn').disabled = false;
@@ -1572,7 +1740,12 @@ async function burnIn(scalePct, quality){
     draw();
   }
 }
-function stopBurn(){ if(recStop) recStop(); else if(S.recording) toast('Not recording', true); }
+function stopBurn(){
+  if(!S.recording) return toast('Not exporting', true);
+  S.cancelExport = true;
+  if(recStop) recStop();
+  toast('Stopping…');
+}
 
 /* =====================================================================
    PANELS
@@ -1697,12 +1870,23 @@ $('#pane-export').innerHTML = `
   </div>
   <div class="grp">
     <span class="lbl">Burn into the video</span>
-    <p class="note" style="margin:0 0 11px">Re-encodes locally with the captions painted onto every frame.
-    It renders in <b>real time</b> — a 3-minute clip takes about 3 minutes — and the tab must stay
-    visible, because browsers throttle background rendering.</p>
+    <div class="row"><label>Engine</label><div class="f">
+      <div class="seg" id="xEngine">
+        <button data-v="precise" class="on">PRECISE</button><button data-v="realtime">REAL-TIME</button>
+      </div>
+    </div></div>
+    <p class="note" id="engNote" style="margin:0 0 11px"></p>
     <div class="row"><label>Resolution</label><div class="f">
       <select id="xScale">
         <option value="100" selected>Original</option><option value="75">75%</option><option value="50">50%</option>
+      </select>
+    </div></div>
+    <div class="row"><label>Frame rate</label><div class="f">
+      <select id="xFps">
+        <option value="24">24 fps</option>
+        <option value="25">25 fps</option>
+        <option value="30" selected>30 fps</option>
+        <option value="60">60 fps</option>
       </select>
     </div></div>
     <div class="row"><label>Bitrate</label><div class="f">
@@ -1832,14 +2016,38 @@ $('#xSRT').onclick = () => needCues() && download(baseName()+'.srt', toSRT(), 't
 $('#xVTT').onclick = () => needCues() && download(baseName()+'.vtt', toVTT(), 'text/vtt;charset=utf-8');
 $('#xTXT').onclick = () => needCues() && download(baseName()+'.txt',
   S.cues.map(c=>c.text.replace(/\n/g,' ').trim()).join('\n'), 'text/plain;charset=utf-8');
-$('#burnBtn').onclick = () => burnIn(+$('#xScale').value, +$('#xQual').value);
+let engine = hasWebCodecs() ? 'precise' : 'realtime';
+$('#xEngine').onclick = e => {
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.v === 'precise' && !hasWebCodecs()) return toast('This browser has no WebCodecs', true);
+  engine = b.dataset.v;
+  [...$('#xEngine').children].forEach(x => x.classList.toggle('on', x === b));
+  syncEngineNote();
+};
+function syncEngineNote(){
+  [...$('#xEngine').children].forEach(x => x.classList.toggle('on', x.dataset.v === engine));
+  $('#engNote').innerHTML = engine === 'precise'
+    ? 'Steps the video frame by frame and stamps each one, so audio and picture <b>cannot drift</b> ' +
+      'no matter how slow the machine is. Usually faster than real time, and the tab can lose focus. ' +
+      'Always writes MP4 (H.264 + AAC).'
+    : 'Records a live canvas as it plays, so it takes <b>exactly as long as the video</b> and the tab ' +
+      'must stay visible. If drawing stutters, frames are dropped and the audio ends up ahead of the ' +
+      'picture — only use this if Precise fails.';
+}
+$('#burnBtn').onclick = () => burnIn(+$('#xScale').value, +$('#xQual').value, +$('#xFps').value, engine);
 $('#burnStop').onclick = stopBurn;
 {
   const m = typeof MediaRecorder !== 'undefined' ? pickMime() : '';
-  $('#fmtNote').textContent = m
-    ? 'This browser will write ' + (m.startsWith('video/mp4')
-        ? 'MP4 (H.264 + AAC).' : 'WebM (VP9 + Opus) — Chrome or Edge would give you MP4.')
-    : 'This browser has no MediaRecorder, so burn-in is unavailable. .srt export still works.';
+  if(!hasWebCodecs()){
+    [...$('#xEngine').children].forEach(x => { if(x.dataset.v === 'precise') x.disabled = true; });
+    $('#fmtNote').textContent = m
+      ? 'No WebCodecs in this browser, so only the real-time recorder is available — it writes ' +
+        (m.startsWith('video/mp4') ? 'MP4.' : 'WebM.') + ' Chrome or Edge would give you the precise encoder.'
+      : 'This browser can neither encode nor record video. Sidecar .srt export still works.';
+  }else{
+    $('#fmtNote').textContent = 'Frame rate only affects the Precise engine; the real-time recorder always captures at 30 fps.';
+  }
+  syncEngineNote();
 }
 
 /* ---- ASR settings ---- */

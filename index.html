@@ -1275,10 +1275,15 @@ const baseName = () => (S.file?.name || 'subtitles').replace(/\.[^.]+$/,'');
 /* =====================================================================
    AUTO-TRANSCRIBE
    ===================================================================== */
+/* The `_timestamped` exports are the ones built with `output_attentions=True`.
+   Word-level timing is derived from the decoder's cross-attention via DTW, so
+   the plain exports fail with "Model outputs must contain cross attentions".
+   Same weights, same accuracy — just extra graph outputs — so we always use
+   these and the word-timing toggle never forces a second model download. */
 const MODELS = [
-  ['onnx-community/whisper-tiny',  'Tiny · ~40 MB · fastest'],
-  ['onnx-community/whisper-base',  'Base · ~80 MB · balanced'],
-  ['onnx-community/whisper-small', 'Small · ~250 MB · most accurate'],
+  ['onnx-community/whisper-tiny_timestamped',  'Tiny · ~40 MB · fastest'],
+  ['onnx-community/whisper-base_timestamped',  'Base · ~80 MB · balanced'],
+  ['onnx-community/whisper-small_timestamped', 'Small · ~250 MB · most accurate'],
 ];
 const LANGS = [['auto','Detect automatically'],['english','English'],['spanish','Spanish'],['french','French'],
   ['german','German'],['italian','Italian'],['portuguese','Portuguese'],['dutch','Dutch'],['russian','Russian'],
@@ -1288,7 +1293,7 @@ const LANGS = [['auto','Detect automatically'],['english','English'],['spanish',
   ['hebrew','Hebrew'],['thai','Thai'],['romanian','Romanian'],['hungarian','Hungarian'],['danish','Danish'],
   ['finnish','Finnish'],['norwegian','Norwegian'],['malay','Malay'],['bengali','Bengali'],['urdu','Urdu']];
 
-let asrPrefs = { model:'onnx-community/whisper-base', lang:'auto', translate:false, gpu:true, words:true, perLine:5 };
+let asrPrefs = { model:'onnx-community/whisper-base_timestamped', lang:'auto', translate:false, gpu:true, words:true, perLine:5 };
 let transcriber = null, loadedKey = '';
 
 function setStatus(on, msg, pct, sub, cancellable, rec){
@@ -1380,21 +1385,35 @@ async function autoTranscribe(){
       on_chunk_end: t => setStatus(true, undefined, clamp((chunkStart+t)/total*100, 0, 99), buf.trim(), true)
     }) : null;
 
-    const res = await transcriber(S.audio, {
+    const opts = {
       chunk_length_s: 30,
       stride_length_s: 5,
-      return_timestamps: asrPrefs.words ? 'word' : true,
       task: asrPrefs.translate ? 'translate' : 'transcribe',
       ...(asrPrefs.lang !== 'auto' ? { language: asrPrefs.lang } : {}),
       streamer
-    });
+    };
+
+    let wordMode = asrPrefs.words, res;
+    try{
+      res = await transcriber(S.audio, { ...opts, return_timestamps: wordMode ? 'word' : true });
+    }catch(err){
+      // A model without cross-attention outputs cannot do word alignment.
+      // Rather than dropping the whole transcript, fall back to line timing.
+      if(wordMode && /cross.?attention|output_attentions/i.test(err.message||'')){
+        console.warn('word timing unavailable, falling back', err);
+        toast('This model has no word-level timing — using line timing instead', true);
+        setStatus(true, 'retrying · line timing', 0, '', true);
+        wordMode = false;
+        res = await transcriber(S.audio, { ...opts, return_timestamps: true });
+      }else throw err;
+    }
     if(S.cancelASR) throw new Error('cancelled');
 
     const raw = (res.chunks || []).filter(c => (c.text||'').trim());
     if(!raw.length) throw new Error('Whisper found no speech in this audio');
 
     let cues;
-    if(asrPrefs.words){
+    if(wordMode){
       const words = raw.map((c,i) => {
         let [s,e] = c.timestamp || [];
         if(s == null) s = i ? raw[i-1].timestamp?.[1] ?? 0 : 0;
@@ -1414,7 +1433,7 @@ async function autoTranscribe(){
 
     S.cues = cues; S.sel = -1; sortCues(); renderCues(); save(); drawTimeline();
     setStatus(false);
-    toast(`Transcribed ${cues.length} cues${asrPrefs.words ? ' with word timing' : ''} — review before exporting`);
+    toast(`Transcribed ${cues.length} cues${wordMode ? ' with word timing' : ''} — review before exporting`);
   }catch(err){
     console.error(err);
     setStatus(false);
@@ -1831,7 +1850,7 @@ $('#burnStop').onclick = stopBurn;
   bar.innerHTML = `
     <span class="lbl">Auto-transcribe settings</span>
     <div class="row"><label>Model</label><div class="f">
-      <select id="aModel">${MODELS.map(([v,t])=>`<option value="${v}"${v.endsWith('base')?' selected':''}>${t}</option>`).join('')}</select>
+      <select id="aModel">${MODELS.map(([v,t])=>`<option value="${v}"${v.includes('base')?' selected':''}>${t}</option>`).join('')}</select>
     </div></div>
     <div class="row"><label>Language</label><div class="f">
       <select id="aLang">${LANGS.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>

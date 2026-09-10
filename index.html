@@ -33,7 +33,6 @@ body{
   font-family:var(--sans);font-size:13px;line-height:1.45;
   overflow:hidden;-webkit-font-smoothing:antialiased;
 }
-/* film grain */
 body::after{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -47,11 +46,10 @@ body::after{
 .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-/* ---------- chassis ---------- */
 #app{display:flex;flex-direction:column;height:100%}
 
 header{
-  display:flex;align-items:center;gap:18px;padding:0 16px;height:46px;flex:none;
+  display:flex;align-items:center;gap:14px;padding:0 16px;height:46px;flex:none;
   background:linear-gradient(180deg,#171a20,#101216);
   border-bottom:1px solid var(--line);position:relative;
 }
@@ -60,27 +58,21 @@ header::after{
   background:linear-gradient(90deg,var(--amber-deep),transparent 42%);
 }
 .brand{display:flex;align-items:baseline;gap:9px;user-select:none}
-.brand b{
-  font-family:var(--sans);font-weight:900;font-variation-settings:"wdth" 118;
-  font-size:16px;letter-spacing:.03em;
-}
+.brand b{font-family:var(--sans);font-weight:900;font-variation-settings:"wdth" 118;font-size:16px;letter-spacing:.03em}
 .brand b i{font-style:normal;color:var(--amber)}
 .brand span{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--dimmer);text-transform:uppercase}
 
 .slot{
   flex:1;min-width:0;display:flex;align-items:center;gap:10px;
   background:#0b0d10;border:1px solid var(--line);border-radius:var(--r);
-  padding:5px 11px;height:28px;
+  padding:5px 11px;height:28px;cursor:pointer;
 }
+.slot:hover{border-color:var(--line-hi)}
 .slot .dot{width:6px;height:6px;border-radius:50%;background:#333a45;flex:none}
 .slot.live .dot{background:var(--green);box-shadow:0 0 8px #7ee39288}
-.slot .fname{
-  font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;
-}
+.slot .fname{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
 .slot .meta{font-family:var(--mono);font-size:10px;color:var(--dimmer);white-space:nowrap;letter-spacing:.05em}
 
-/* ---------- buttons ---------- */
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
@@ -99,9 +91,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 .btn.red{background:transparent;border-color:#5e2b25;color:#ff8a7a}
 .btn.red:hover{background:#2a1512;border-color:var(--red);color:var(--red)}
 .btn.sm{height:24px;padding:0 9px;font-size:9.5px}
-.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
-  outline:1px solid var(--cyan);outline-offset:1px
-}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:1px solid var(--cyan);outline-offset:1px}
 
 input,select,textarea{
   font-family:var(--mono);font-size:11px;color:var(--text);
@@ -114,13 +104,11 @@ input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--lin
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--amber);margin-top:-4.5px}
 input[type=range]::-moz-range-track{height:2px;background:var(--line-hi)}
 input[type=range]::-moz-range-thumb{width:11px;height:11px;border:none;border-radius:50%;background:var(--amber)}
-input[type=color]{padding:0;width:30px;height:22px;border:1px solid var(--line);background:none;cursor:pointer}
-input[type=checkbox]{accent-color:var(--amber);width:13px;height:13px;cursor:pointer}
+input[type=color]{padding:0;width:30px;height:22px;border:1px solid var(--line);background:none;cursor:pointer;flex:none}
+input[type=checkbox]{accent-color:var(--amber);width:13px;height:13px;cursor:pointer;flex:none}
 
-/* ---------- main split ---------- */
 main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 408px;min-height:0}
 
-/* ---------- stage ---------- */
 .stage{display:flex;flex-direction:column;min-width:0;min-height:0;border-right:1px solid var(--line)}
 .screen{
   flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;
@@ -129,10 +117,11 @@ main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 408px;min-height:0}
     repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px);
   padding:16px;
 }
-#canvas{max-width:100%;max-height:100%;display:none;box-shadow:0 0 0 1px var(--line),0 24px 60px -20px #000;background:#000}
+#canvas{max-width:100%;max-height:100%;display:none;box-shadow:0 0 0 1px var(--line),0 24px 60px -20px #000;background:#000;touch-action:none}
 #canvas.on{display:block}
+#canvas.grab{cursor:grab}
+#canvas.grabbing{cursor:grabbing}
 
-/* empty state */
 .empty{position:absolute;inset:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;text-align:center}
 .empty.hide{display:none}
 .dropzone{
@@ -141,10 +130,7 @@ main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 408px;min-height:0}
   transition:border-color .15s,background .15s;
 }
 body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
-.dropzone h1{
-  margin:0;font-size:30px;font-weight:900;font-variation-settings:"wdth" 112;
-  letter-spacing:-.01em;line-height:1;
-}
+.dropzone h1{margin:0;font-size:30px;font-weight:900;font-variation-settings:"wdth" 112;letter-spacing:-.01em;line-height:1}
 .dropzone p{margin:0;color:var(--dim);font-size:12.5px;max-width:42ch}
 .reel{display:flex;gap:5px}
 .reel i{width:9px;height:16px;background:#1e232b;border-radius:1px;display:block}
@@ -152,97 +138,73 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 .privacy{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dimmer);display:flex;gap:7px;align-items:center}
 .privacy b{color:var(--green);font-weight:600}
 
-/* ---------- transport ---------- */
 .transport{
-  flex:none;display:flex;align-items:center;gap:14px;padding:9px 14px;
-  background:var(--chassis);border-top:1px solid var(--line);
+  flex:none;display:flex;align-items:center;gap:12px;padding:9px 14px;
+  background:var(--chassis);border-top:1px solid var(--line);flex-wrap:wrap;
 }
-.tc{font-family:var(--mono);font-size:15px;font-weight:600;letter-spacing:.02em;font-variant-numeric:tabular-nums;color:var(--amber);text-shadow:0 0 14px #ffb43d3d}
+.tc{font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--amber);text-shadow:0 0 14px #ffb43d3d}
 .tc small{color:var(--dimmer);font-size:11px;font-weight:400;text-shadow:none}
-.tbtn{
-  width:32px;height:30px;border-radius:var(--r);border:1px solid var(--line-hi);background:var(--panel-hi);
-  display:grid;place-items:center;transition:background .12s,border-color .12s;
-}
+.tbtn{width:32px;height:30px;border-radius:var(--r);border:1px solid var(--line-hi);background:var(--panel-hi);display:grid;place-items:center;transition:background .12s,border-color .12s}
 .tbtn:hover{background:#252b34;border-color:#4b5566}
 .tbtn svg{width:13px;height:13px;fill:var(--text)}
 .tbtn.play{width:42px;background:var(--amber);border-color:var(--amber)}
 .tbtn.play svg{fill:#17120a}
 .tbtn.play:hover{background:#ffc663}
 .spacer{flex:1}
-.vol{display:flex;align-items:center;gap:7px;width:104px}
+.vol{display:flex;align-items:center;gap:7px;width:100px}
 .vol input{width:100%}
 
-/* ---------- timeline ---------- */
 .tl{flex:none;background:var(--ink);border-top:1px solid var(--line);padding:8px 14px 11px}
 .tl-head{display:flex;align-items:center;gap:12px;margin-bottom:7px}
 .zoom{display:flex;gap:1px;background:var(--line);border-radius:2px;overflow:hidden}
-.zoom button{
-  font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 8px;
-  background:var(--panel);color:var(--dim);transition:background .1s,color .1s;
-}
+.zoom button{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 8px;background:var(--panel);color:var(--dim);transition:background .1s,color .1s}
 .zoom button.on{background:var(--amber);color:#17120a;font-weight:700}
 .zoom button:hover:not(.on){background:var(--panel-hi);color:var(--text)}
 #tlwrap{position:relative;height:92px;border:1px solid var(--line);border-radius:var(--r);background:#080a0c;overflow:hidden}
-#timeline{display:block;width:100%;height:100%;cursor:crosshair}
+#timeline{display:block;width:100%;height:100%;cursor:crosshair;touch-action:none}
 .hint{font-family:var(--mono);font-size:9.5px;color:var(--dimmer);letter-spacing:.06em}
 
-/* ---------- rack (right column) ---------- */
 .rack{display:flex;flex-direction:column;min-height:0;background:var(--chassis)}
 .tabs{display:flex;flex:none;border-bottom:1px solid var(--line);background:var(--ink)}
-.tabs button{
-  flex:1;padding:11px 4px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--dimmer);border-bottom:2px solid transparent;transition:color .12s;
-}
+.tabs button{flex:1;padding:11px 4px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--dimmer);border-bottom:2px solid transparent;transition:color .12s}
 .tabs button:hover{color:var(--dim)}
 .tabs button.on{color:var(--text);border-bottom-color:var(--amber);background:var(--chassis)}
 .tabs .cnt{font-size:9px;color:var(--dimmer);margin-left:5px}
 .pane{flex:1;overflow-y:auto;display:none;min-height:0}
 .pane.on{display:block}
 
-.bar{
-  display:flex;gap:7px;padding:9px 11px;border-bottom:1px solid var(--line);
-  position:sticky;top:0;background:var(--chassis);z-index:5;flex-wrap:wrap;
-}
+.bar{display:flex;gap:7px;padding:9px 11px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--chassis);z-index:5;flex-wrap:wrap}
 
-/* cue rows */
-.cues{padding:7px 9px 40px}
-.cue{
-  border:1px solid var(--line);border-left:2px solid #2b323d;border-radius:var(--r);
-  background:var(--panel);margin-bottom:6px;padding:7px 9px;transition:border-color .12s,background .12s;
-}
+.cues{padding:7px 9px 20px}
+.cue{border:1px solid var(--line);border-left:2px solid #2b323d;border-radius:var(--r);background:var(--panel);margin-bottom:6px;padding:7px 9px;transition:border-color .12s,background .12s}
 .cue:hover{border-color:var(--line-hi)}
 .cue.sel{border-color:var(--line-hi);border-left-color:var(--cyan);background:var(--panel-hi)}
 .cue.live{border-left-color:var(--amber);box-shadow:inset 3px 0 12px -6px var(--amber)}
 .cue-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
 .cue-n{font-family:var(--mono);font-size:9.5px;color:var(--dimmer);min-width:22px;font-weight:600}
-.cue-top input.t{width:88px;text-align:center;font-size:10.5px;padding:3px 2px;letter-spacing:-.01em}
+.cue-top input.t{width:88px;text-align:center;font-size:10.5px;padding:3px 2px}
 .cue-top .arw{color:var(--dimmer);font-size:10px}
 .cue-top .dur{font-family:var(--mono);font-size:9.5px;color:var(--dimmer);margin-left:auto;padding-right:2px}
+.cue-top .wt{color:var(--cyan);font-size:9px;margin-left:auto;font-family:var(--mono)}
 .cue-acts{display:flex;gap:3px}
-.icb{
-  width:21px;height:21px;border-radius:2px;display:grid;place-items:center;
-  color:var(--dimmer);border:1px solid transparent;transition:all .1s;font-family:var(--mono);font-size:11px;
-}
+.icb{width:21px;height:21px;border-radius:2px;display:grid;place-items:center;color:var(--dimmer);border:1px solid transparent;transition:all .1s;font-family:var(--mono);font-size:11px}
 .icb:hover{background:#0b0d10;border-color:var(--line-hi);color:var(--text)}
 .icb.del:hover{color:var(--red);border-color:#5e2b25}
-.cue textarea{
-  width:100%;resize:vertical;min-height:38px;font-family:var(--sans);font-size:12.5px;
-  line-height:1.4;padding:6px 7px;
-}
+.cue textarea{width:100%;resize:vertical;min-height:38px;font-family:var(--sans);font-size:12.5px;line-height:1.4;padding:6px 7px}
 .cue.over{border-left-color:var(--red)}
 .warn{font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:.05em;margin-top:4px}
 
 .blank{padding:52px 26px;text-align:center;color:var(--dimmer);font-size:12px;line-height:1.7}
 .blank b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--dim);margin-bottom:9px}
 
-/* form grid */
 .grp{padding:12px 13px;border-bottom:1px solid var(--line)}
+.grp.off{display:none}
 .grp>.lbl{display:block;margin-bottom:10px}
 .row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
 .row:last-child{margin-bottom:0}
 .row>label{flex:none;width:88px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.04em}
 .row>.f{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
-.row .f input[type=range]{flex:1}
+.row .f input[type=range]{flex:1;min-width:40px}
 .row .f select,.row .f input[type=text],.row .f input[type=number]{flex:1;min-width:0}
 .val{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:34px;text-align:right;flex:none}
 .seg{display:flex;gap:1px;background:var(--line);border-radius:2px;overflow:hidden;flex:1}
@@ -252,11 +214,10 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 .note{font-size:11px;color:var(--dimmer);line-height:1.55;margin:9px 0 0}
 .note code{font-family:var(--mono);font-size:10px;color:var(--dim);background:#0b0d10;padding:1px 4px;border-radius:2px}
 
-/* status / progress */
-.status{
-  margin:11px 13px;padding:10px 11px;border:1px solid var(--line);border-radius:var(--r);
-  background:#0b0d10;display:none;
-}
+.pal{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.pal input[type=color]{width:34px;height:26px}
+
+.status{margin:11px 13px;padding:10px 11px;border:1px solid var(--line);border-radius:var(--r);background:#0b0d10;display:none}
 .status.on{display:block}
 .status .st-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .status .st-msg{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--amber);text-transform:uppercase}
@@ -266,7 +227,6 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 .track.rec i{background:var(--red);box-shadow:0 0 10px #ff534066}
 .st-sub{font-family:var(--mono);font-size:9.5px;color:var(--dimmer);margin-top:7px;line-height:1.5;word-break:break-word;max-height:56px;overflow:hidden}
 
-/* toast */
 #toast{
   position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);opacity:0;pointer-events:none;
   background:var(--panel-hi);border:1px solid var(--line-hi);border-left:2px solid var(--amber);
@@ -276,20 +236,13 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #toast.bad{border-left-color:var(--red);color:#ffb3a8}
 
-/* modal */
 .modal{position:fixed;inset:0;background:#05060899;backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:300;padding:24px}
 .modal.on{display:flex}
-.modal .box{
-  background:var(--chassis);border:1px solid var(--line-hi);border-radius:5px;max-width:520px;width:100%;
-  max-height:82vh;overflow:auto;box-shadow:0 30px 80px -20px #000;
-}
+.modal .box{background:var(--chassis);border:1px solid var(--line-hi);border-radius:5px;max-width:520px;width:100%;max-height:82vh;overflow:auto;box-shadow:0 30px 80px -20px #000}
 .modal h2{margin:0;padding:14px 18px;font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--line);color:var(--amber)}
 .modal .body{padding:16px 18px}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;align-items:center;font-size:12px}
-.keys kbd{
-  font-family:var(--mono);font-size:10px;background:#0b0d10;border:1px solid var(--line-hi);
-  border-bottom-width:2px;border-radius:3px;padding:2px 6px;color:var(--text);white-space:nowrap;justify-self:start;
-}
+.keys kbd{font-family:var(--mono);font-size:10px;background:#0b0d10;border:1px solid var(--line-hi);border-bottom-width:2px;border-radius:3px;padding:2px 6px;color:var(--text);white-space:nowrap;justify-self:start}
 .keys span{color:var(--dim)}
 .modal .foot{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
 
@@ -303,7 +256,7 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 <div id="app">
   <header>
     <div class="brand"><b>SUB<i>DECK</i></b><span>caption bay</span></div>
-    <div class="slot" id="slot">
+    <div class="slot" id="slot" title="Click to load a different video">
       <span class="dot"></span>
       <span class="fname" id="fname">no source loaded</span>
       <span class="meta" id="fmeta"></span>
@@ -330,7 +283,7 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 
       <div class="transport">
         <button class="tbtn play" id="btnPlay" title="Play / pause (Space)">
-          <svg viewBox="0 0 24 24" id="icPlay"><path d="M8 5v14l11-7z"/></svg>
+          <svg viewBox="0 0 24 24"><path id="icPlay" d="M8 5v14l11-7z"/></svg>
         </button>
         <button class="tbtn" id="btnBack" title="Back 5s"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
         <button class="tbtn" id="btnFwd" title="Forward 5s"><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
@@ -340,7 +293,7 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
         <button class="btn ghost sm" id="btnOut" title="Set selected cue OUT to playhead (])">Set out</button>
         <div class="spacer"></div>
         <span class="lbl">Rate</span>
-        <select id="rate" style="width:64px">
+        <select id="rate" style="width:62px">
           <option>0.5</option><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option><option>2</option>
         </select>
         <div class="vol"><span class="lbl">Vol</span><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
@@ -355,7 +308,7 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
             <button data-z="40">40s</button>
             <button data-z="12">12s</button>
           </div>
-          <span class="hint">drag a block to move · drag its edge to trim · click the ruler to seek</span>
+          <span class="hint">drag a block to move · drag its edge to trim · drag the caption on the video to place it</span>
         </div>
         <div id="tlwrap"><canvas id="timeline"></canvas></div>
       </div>
@@ -368,7 +321,6 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
         <button data-tab="export">Export</button>
       </div>
 
-      <!-- CUES -->
       <div class="pane on" id="pane-cues">
         <div class="bar">
           <button class="btn amber sm" id="btnAuto">◆ Auto-transcribe</button>
@@ -385,10 +337,7 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
         <div class="cues" id="cueList"></div>
       </div>
 
-      <!-- STYLE -->
       <div class="pane" id="pane-style"></div>
-
-      <!-- EXPORT -->
       <div class="pane" id="pane-export"></div>
     </aside>
   </main>
@@ -402,17 +351,18 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
     <div class="body">
       <div class="keys">
         <kbd>Space</kbd><span>Play / pause</span>
-        <kbd>← / →</kbd><span>Nudge 1s &nbsp;·&nbsp; <b>Shift</b> 5s &nbsp;·&nbsp; <b>Alt</b> 0.1s</span>
+        <kbd>← / →</kbd><span>Nudge 1s · <b>Shift</b> 5s · <b>Alt</b> 0.1s</span>
         <kbd>N</kbd><span>New cue at the playhead</span>
         <kbd>[</kbd><span>Set selected cue IN to the playhead</span>
         <kbd>]</kbd><span>Set selected cue OUT to the playhead</span>
         <kbd>S</kbd><span>Split the selected cue at the playhead</span>
         <kbd>Del</kbd><span>Delete the selected cue</span>
         <kbd>Tab</kbd><span>Inside a cue: jump to the next cue's text</span>
-        <kbd>Ctrl</kbd> <span>+ <b>S</b> — download an .srt right away</span>
+        <kbd>Ctrl+S</kbd><span>Download an .srt right away</span>
+        <kbd>Esc</kbd><span>Cancel a drag / close this box</span>
       </div>
-      <p class="note">Your cues and styling are saved in this browser automatically, so a refresh
-      won't lose the work — you just re-pick the video file (browsers never let a page keep a file handle).</p>
+      <p class="note">Cues are saved per video file in this browser, so switching between
+      videos keeps each one's captions. Styling is shared across all of them.</p>
     </div>
     <div class="foot"><button class="btn ghost" data-close>Close</button></div>
   </div>
@@ -424,32 +374,36 @@ body.dragging .dropzone{border-color:var(--amber);background:#ffb43d0a}
 <script type="module">
 /* =====================================================================
    SUBDECK — a free, offline-first subtitle editor.
-   Video never leaves the machine: it is read as a blob URL, drawn to a
-   canvas, and (optionally) re-encoded locally with MediaRecorder.
-   Speech recognition uses Whisper via transformers.js — the model is
-   downloaded once from the Hugging Face CDN and then runs on-device.
+   Everything (decode, recognition, encode) happens on this machine.
    ===================================================================== */
 
 const $ = s => document.querySelector(s);
 const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
+const uid = () => Math.random().toString(36).slice(2);
 
-/* ---------------- state ---------------- */
+/* ---------------- style defaults ---------------- */
+const DEFAULT_STYLE = {
+  mode:'classic',                     // 'classic' | 'pop'
+  font:'Archivo', size:5.6, weight:700, upper:false,
+  color:'#ffffff', outline:14, outlineColor:'#000000',
+  box:45, boxColor:'#000000', shadow:true,
+  bottom:7, xOffset:0, width:82, align:'center', lineGap:1.22,
+  // word-pop
+  palette:['#ffe66b','#7ee392','#54d7e8','#ff8fa3','#ffb43d','#c4a5ff'],
+  rise:70, animMs:180, ghost:0, popScale:14, perLineColor:false
+};
+
 const S = {
   file:null, url:null, dur:0, ready:false,
   cues:[], sel:-1,
-  peaks:null, audio:null,          // waveform peaks + 16k mono PCM for ASR
+  peaks:null, audio:null,
   zoom:0, view:0,
   recording:false, transcribing:false, cancelASR:false,
-  style:{
-    font:'Archivo', size:5.6, weight:700, upper:false,
-    color:'#ffffff', outline:14, outlineColor:'#000000',
-    box:45, boxColor:'#000000', shadow:true,
-    bottom:7, width:82, align:'center', lineGap:1.22
-  }
+  style:{ ...DEFAULT_STYLE, palette:[...DEFAULT_STYLE.palette] }
 };
 
 const video = document.createElement('video');
-video.preload = 'auto'; video.playsInline = true; video.crossOrigin = 'anonymous';
+video.preload = 'auto'; video.playsInline = true;
 
 const canvas = $('#canvas'), cx = canvas.getContext('2d');
 const tlc = $('#timeline'), tcx = tlc.getContext('2d');
@@ -470,7 +424,6 @@ function parseTC(str){
   return isFinite(n) ? n : null;
 }
 
-/* ---------------- toast ---------------- */
 let toastT;
 function toast(msg, bad){
   const el = $('#toast');
@@ -479,10 +432,11 @@ function toast(msg, bad){
 }
 
 /* =====================================================================
-   LOADING A SOURCE
+   SOURCE LOADING  (any number of videos, one after another)
    ===================================================================== */
 $('#btnOpen').onclick = $('#btnPick').onclick = () => $('#filePick').click();
-$('#filePick').onchange = e => { if(e.target.files[0]) load(e.target.files[0]); e.target.value=''; };
+$('#slot').onclick = () => $('#filePick').click();
+$('#filePick').onchange = e => { const f = e.target.files[0]; e.target.value=''; if(f) load(f); };
 
 ['dragenter','dragover'].forEach(ev => document.addEventListener(ev, e => {
   e.preventDefault(); document.body.classList.add('dragging');
@@ -497,24 +451,69 @@ document.addEventListener('drop', e => {
   if(/\.(srt|vtt)$/i.test(f.name)) readSubFile(f); else load(f);
 });
 
+function seekTo(t){
+  // Resolves immediately when we are already there — otherwise `seeked`
+  // never fires and every caller downstream hangs forever.
+  return new Promise(res => {
+    if(!S.ready) return res();
+    t = clamp(t, 0, Math.max(0, S.dur - 0.001));
+    if(Math.abs(video.currentTime - t) < 0.02) return res();
+    let done = false;
+    const fin = () => { if(done) return; done = true; video.removeEventListener('seeked', fin); res(); };
+    video.addEventListener('seeked', fin);
+    try{ video.currentTime = t; }catch(_){ fin(); }
+    setTimeout(fin, 4000);
+  });
+}
+
 async function load(file){
+  if(S.recording) return toast('Finish or stop the export first', true);
   if(!/^(video|audio)\//.test(file.type) && !/\.(mp4|mkv|webm|mov|m4v|avi|mp3|wav|m4a|ogg|flac)$/i.test(file.name)){
     return toast('That does not look like a video or audio file', true);
   }
+
+  // Decide what happens to the cues currently on screen before we swap.
+  const saved = loadProject(file.name);
+  if(saved && saved.length){
+    S.cues = saved;
+  }else if(S.cues.length && S.file && S.file.name !== file.name){
+    const keep = confirm(
+      `Keep the ${S.cues.length} cues currently loaded and re-use them for "${file.name}"?\n\n` +
+      `OK  = keep them\nCancel = start with an empty caption list`);
+    if(!keep) S.cues = [];
+  }
+
+  try{ video.pause(); }catch(_){}
   if(S.url) URL.revokeObjectURL(S.url);
-  S.file = file; S.url = URL.createObjectURL(file); S.ready = false;
-  S.peaks = null; S.audio = null;
-  video.src = S.url;
+  S.file = file; S.url = URL.createObjectURL(file);
+  S.ready = false; S.peaks = null; S.audio = null; S.sel = -1; lastLive = -2;
+
   $('#fname').textContent = file.name;
-  $('#fmeta').textContent = (file.size/1048576).toFixed(1)+' MB';
+  $('#fmeta').textContent = (file.size/1048576).toFixed(1)+' MB · loading…';
   $('#slot').classList.add('live');
 
-  await new Promise((res,rej)=>{
-    video.onloadedmetadata = res;
-    video.onerror = () => rej(new Error('This browser cannot decode that file'));
-  }).catch(err => { toast(err.message, true); throw err; });
+  const ok = await new Promise(res => {
+    const good = () => { cleanup(); res(true); };
+    const bad  = () => { cleanup(); res(false); };
+    const cleanup = () => {
+      video.removeEventListener('loadedmetadata', good);
+      video.removeEventListener('error', bad);
+    };
+    video.addEventListener('loadedmetadata', good);
+    video.addEventListener('error', bad);
+    video.src = S.url;
+    video.load();
+    setTimeout(bad, 30000);
+  });
 
-  S.dur = video.duration || 0;
+  if(!ok){
+    $('#slot').classList.remove('live');
+    $('#fname').textContent = 'could not read ' + file.name;
+    $('#fmeta').textContent = '';
+    return toast('This browser cannot decode that file — try MP4/WebM, or convert it first', true);
+  }
+
+  S.dur = isFinite(video.duration) ? video.duration : 0;
   S.ready = true;
   canvas.width  = video.videoWidth  || 1280;
   canvas.height = video.videoHeight || 720;
@@ -522,20 +521,24 @@ async function load(file){
   $('#empty').classList.add('hide');
   $('#tcDur').textContent = ' / ' + tc(S.dur, '.', false);
   $('#fmeta').textContent = `${(file.size/1048576).toFixed(1)} MB · ${canvas.width}×${canvas.height} · ${tc(S.dur,'.',false)}`;
+
+  await seekTo(0);
   setZoom(S.zoom);
   buildAudioGraph();
-  draw();
-  toast('Loaded — decoding audio for the waveform…');
+  renderCues(); draw(); drawTimeline();
+  toast(saved && saved.length
+    ? `Loaded — restored ${saved.length} saved cues for this file`
+    : 'Loaded — decoding audio for the waveform…');
   decodeAudio();
 }
 
-/* ---------- audio: waveform peaks + 16 kHz mono PCM for Whisper ---------- */
 async function decodeAudio(){
+  const forFile = S.file;
   try{
-    const buf = await S.file.arrayBuffer();
+    const buf = await forFile.arrayBuffer();
     const ctx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
     const ab = await ctx.decodeAudioData(buf);
-    // mix to mono
+    if(S.file !== forFile){ ctx.close(); return; }        // a different video was loaded meanwhile
     let pcm;
     if(ab.numberOfChannels > 1){
       const a = ab.getChannelData(0), b = ab.getChannelData(1);
@@ -545,7 +548,6 @@ async function decodeAudio(){
     S.audio = pcm;
     ctx.close();
 
-    // peak envelope for the timeline
     const N = 4000, step = Math.max(1, Math.floor(pcm.length/N));
     const peaks = new Float32Array(N);
     for(let i=0;i<N;i++){
@@ -557,13 +559,13 @@ async function decodeAudio(){
     drawTimeline();
     toast('Audio ready — auto-transcribe is available');
   }catch(err){
-    console.warn(err);
-    toast('Could not decode this file\'s audio track — manual captioning still works', true);
+    console.warn('audio decode', err);
+    toast('Could not decode this file\'s audio — manual captioning still works', true);
     drawTimeline();
   }
 }
 
-/* ---------- playback audio graph (lets us record audio while burning in) ---------- */
+/* playback graph: lets the burn-in recorder tap audio independently of volume */
 let actx, srcNode, monitorGain, streamDest;
 function buildAudioGraph(){
   if(actx) return;
@@ -575,15 +577,56 @@ function buildAudioGraph(){
     srcNode.connect(monitorGain).connect(actx.destination);
     srcNode.connect(streamDest);
     monitorGain.gain.value = +$('#vol').value;
-  }catch(e){ console.warn('audio graph', e); }
+  }catch(e){
+    console.warn('audio graph unavailable', e);
+    actx = null; streamDest = null;
+  }
 }
 $('#vol').oninput = e => { if(monitorGain) monitorGain.gain.value = +e.target.value; else video.volume = +e.target.value; };
-$('#rate').onchange = e => video.playbackRate = +e.target.value;
+$('#rate').onchange = e => { if(!S.recording) video.playbackRate = +e.target.value; };
 
 /* =====================================================================
-   RENDER — one draw path for both the preview and the burned-in export,
-   so what you see is exactly what gets encoded.
+   WORD TIMING
+   Cues may carry explicit per-word timings (from Whisper's word-level
+   mode). When they don't, we synthesise them by splitting the cue's
+   span across its words, weighted by length — good enough to drive the
+   word-pop animation on hand-typed captions.
    ===================================================================== */
+function cueWords(c){
+  if(c.words && c.words.length) return c.words;
+  const parts = String(c.text||'').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return [];
+  const span = Math.max(0.05, c.end - c.start);
+  const weight = parts.reduce((a,w) => a + w.length + 1, 0);
+  let t = c.start;
+  return parts.map(w => {
+    const d = span * ((w.length + 1) / weight);
+    const o = { w, t, d };
+    t += d;
+    return o;
+  });
+}
+/* Keep hand-made edits from destroying good word timings: if the word
+   count still matches, just re-label them. */
+function retextCue(c, text){
+  const before = c.words;
+  c.text = text;
+  if(!before) return;
+  const parts = text.trim().split(/\s+/).filter(Boolean);
+  if(parts.length === before.length) before.forEach((o,i) => o.w = parts[i]);
+  else c.words = null;
+}
+
+/* =====================================================================
+   CAPTION RENDERING
+   One code path feeds both the on-screen preview and the burned-in
+   export, so the preview is exact rather than approximate.
+   ===================================================================== */
+let capBox = null;   // last painted caption bounds, for drag-to-position
+
+function fontStr(st, px){ return `${st.weight} ${px}px "${st.font}", sans-serif`; }
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+
 function wrapLines(ctx, text, maxW){
   const out = [];
   for(const para of String(text).split('\n')){
@@ -600,54 +643,150 @@ function wrapLines(ctx, text, maxW){
   return out;
 }
 
-function paintSubtitle(ctx, W, H, text){
+/* anchor + geometry shared by both modes */
+function capGeom(W, H, st, nLines, fs){
+  const maxW = W * st.width / 100;
+  const lh = fs * st.lineGap;
+  const bottom = H - H*st.bottom/100;
+  const startY = bottom - (nLines-1)*lh;
+  let anchorX = st.align === 'left' ? (W-maxW)/2 : st.align === 'right' ? (W+maxW)/2 : W/2;
+  anchorX += W * st.xOffset / 100;
+  return { maxW, lh, bottom, startY, anchorX };
+}
+
+function strokeFill(ctx, text, x, y, fs, st, fill){
+  if(st.shadow){ ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = fs*0.22; ctx.shadowOffsetY = fs*0.045; }
+  if(st.outline > 0){
+    ctx.lineWidth = fs * st.outline / 100;
+    ctx.strokeStyle = st.outlineColor;
+    ctx.lineJoin = 'round'; ctx.miterLimit = 2;
+    ctx.strokeText(text, x, y);
+  }
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ctx.fillStyle = fill;
+  ctx.fillText(text, x, y);
+}
+
+/* ---------- classic: whole cue at once ---------- */
+function paintClassic(ctx, W, H, cue){
   const st = S.style;
-  if(!text) return;
-  const shown = st.upper ? text.toUpperCase() : text;
+  const raw = st.upper ? cue.text.toUpperCase() : cue.text;
   const fs = H * st.size / 100;
-  ctx.font = `${st.weight} ${fs}px "${st.font}", sans-serif`;
+  ctx.font = fontStr(st, fs);
   ctx.textBaseline = 'alphabetic';
 
-  const maxW = W * st.width / 100;
-  const lines = wrapLines(ctx, shown, maxW).filter(Boolean);
+  const g0 = capGeom(W, H, st, 1, fs);
+  const lines = wrapLines(ctx, raw, g0.maxW).filter(Boolean);
   if(!lines.length) return;
-
-  const lh = fs * st.lineGap;
-  const padX = fs*0.34, padY = fs*0.16;
-  const bottom = H - H*st.bottom/100;
-  const startY = bottom - (lines.length-1)*lh;
-
-  const anchorX = st.align === 'left' ? (W-maxW)/2 : st.align === 'right' ? (W+maxW)/2 : W/2;
+  const g = capGeom(W, H, st, lines.length, fs);
   ctx.textAlign = st.align;
 
-  // background plates
+  const padX = fs*0.34, padY = fs*0.16;
+  let minX = Infinity, maxX = -Infinity;
+
   if(st.box > 0){
-    ctx.save();
-    ctx.globalAlpha = st.box/100;
-    ctx.fillStyle = st.boxColor;
+    ctx.save(); ctx.globalAlpha = st.box/100; ctx.fillStyle = st.boxColor;
     lines.forEach((ln,i)=>{
-      if(!ln) return;
-      const w = ctx.measureText(ln).width;
-      const y = startY + i*lh;
-      const x = st.align==='left' ? anchorX : st.align==='right' ? anchorX-w : anchorX-w/2;
-      ctx.fillRect(x-padX, y-fs*0.86-padY, w+padX*2, lh+padY*0.6);
+      const w = ctx.measureText(ln).width, y = g.startY + i*g.lh;
+      const x = st.align==='left' ? g.anchorX : st.align==='right' ? g.anchorX-w : g.anchorX-w/2;
+      ctx.fillRect(x-padX, y-fs*0.86-padY, w+padX*2, g.lh+padY*0.6);
     });
     ctx.restore();
   }
 
   lines.forEach((ln,i)=>{
-    const y = startY + i*lh;
-    if(st.shadow){ ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = fs*0.22; ctx.shadowOffsetY = fs*0.045; }
-    if(st.outline > 0){
-      ctx.lineWidth = fs * st.outline / 100;
-      ctx.strokeStyle = st.outlineColor;
-      ctx.lineJoin = 'round'; ctx.miterLimit = 2;
-      ctx.strokeText(ln, anchorX, y);
-    }
-    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-    ctx.fillStyle = st.color;
-    ctx.fillText(ln, anchorX, y);
+    const w = ctx.measureText(ln).width, y = g.startY + i*g.lh;
+    const x = st.align==='left' ? g.anchorX : st.align==='right' ? g.anchorX-w : g.anchorX-w/2;
+    minX = Math.min(minX, x); maxX = Math.max(maxX, x+w);
+    strokeFill(ctx, ln, g.anchorX, y, fs, st, st.color);
   });
+
+  capBox = { x:minX-padX, y:g.startY-fs-padY, w:(maxX-minX)+padX*2, h:lines.length*g.lh+padY*2 };
+}
+
+/* ---------- word pop: words rise in one at a time, each its own colour ---------- */
+function paintPop(ctx, W, H, cue, now){
+  const st = S.style;
+  const words = cueWords(cue);
+  if(!words.length) return;
+  const fs = H * st.size / 100;
+  ctx.font = fontStr(st, fs);
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+
+  const g0 = capGeom(W, H, st, 1, fs);
+  const space = ctx.measureText(' ').width;
+
+  // lay the words out into lines
+  const lines = [];
+  let cur = { items:[], width:0 };
+  words.forEach((o,i) => {
+    const label = st.upper ? o.w.toUpperCase() : o.w;
+    const w = ctx.measureText(label).width;
+    const add = cur.items.length ? space + w : w;
+    if(cur.items.length && cur.width + add > g0.maxW){ lines.push(cur); cur = { items:[], width:0 }; }
+    cur.items.push({ label, w, t:o.t, d:o.d, i });
+    cur.width += cur.items.length === 1 ? w : add;
+  });
+  if(cur.items.length) lines.push(cur);
+  if(!lines.length) return;
+
+  const g = capGeom(W, H, st, lines.length, fs);
+  const rise = fs * st.rise / 100;
+  const anim = Math.max(0.001, st.animMs/1000);
+  const padX = fs*0.34, padY = fs*0.16;
+
+  // stable background plate behind the full block (no jitter as words land)
+  if(st.box > 0){
+    ctx.save(); ctx.globalAlpha = st.box/100; ctx.fillStyle = st.boxColor;
+    lines.forEach((ln,li)=>{
+      const y = g.startY + li*g.lh;
+      const x = st.align==='left' ? g.anchorX : st.align==='right' ? g.anchorX-ln.width : g.anchorX-ln.width/2;
+      ctx.fillRect(x-padX, y-fs*0.86-padY, ln.width+padX*2, g.lh+padY*0.6);
+    });
+    ctx.restore();
+  }
+
+  let minX = Infinity, maxX = -Infinity;
+
+  lines.forEach((ln,li)=>{
+    const baseY = g.startY + li*g.lh;
+    let x = st.align==='left' ? g.anchorX : st.align==='right' ? g.anchorX-ln.width : g.anchorX-ln.width/2;
+    minX = Math.min(minX, x); maxX = Math.max(maxX, x+ln.width);
+
+    ln.items.forEach((it,k)=>{
+      const age = (now - it.t) / anim;
+      let alpha, dy, scale = 1;
+      if(age <= 0){
+        if(!st.ghost){ x += it.w + space; return; }
+        alpha = st.ghost/100; dy = 0;
+      }else{
+        const p = Math.min(1, age);
+        alpha = st.ghost ? st.ghost/100 + (1-st.ghost/100)*p : p;
+        dy = (1 - easeOut(p)) * rise;
+        if(st.popScale) scale = 1 + (1 - easeOut(p)) * (st.popScale/100);
+      }
+      const spoken = now >= it.t && now < it.t + it.d;
+      const pal = st.palette.filter(Boolean);
+      const colour = pal.length
+        ? pal[(st.perLineColor ? li : it.i) % pal.length]
+        : st.color;
+
+      ctx.save();
+      ctx.globalAlpha = clamp(alpha, 0, 1);
+      const cxp = x + it.w/2, cyp = baseY;
+      ctx.translate(cxp, cyp + dy);
+      const s = scale * (spoken && st.popScale ? 1 + st.popScale/300 : 1);
+      ctx.scale(s, s);
+      ctx.translate(-cxp, -cyp);
+      strokeFill(ctx, it.label, x, baseY, fs, st, colour);
+      ctx.restore();
+
+      x += it.w + space;
+    });
+  });
+
+  capBox = { x:minX-padX, y:g.startY-fs-padY, w:(maxX-minX)+padX*2, h:lines.length*g.lh+padY*2 };
 }
 
 function cueAt(t){
@@ -656,11 +795,15 @@ function cueAt(t){
 }
 
 function drawFrame(ctx, W, H, t){
-  ctx.clearRect(0,0,W,H);
   ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
-  try{ ctx.drawImage(video, 0, 0, W, H); }catch(e){}
+  try{ ctx.drawImage(video, 0, 0, W, H); }catch(_){}
   const i = cueAt(t);
-  if(i >= 0) paintSubtitle(ctx, W, H, S.cues[i].text);
+  capBox = null;
+  if(i < 0) return;
+  const cue = S.cues[i];
+  if(!String(cue.text||'').trim()) return;
+  if(S.style.mode === 'pop') paintPop(ctx, W, H, cue, t);
+  else paintClassic(ctx, W, H, cue);
 }
 
 let lastLive = -2;
@@ -671,7 +814,6 @@ function draw(){
   const live = cueAt(video.currentTime);
   if(live !== lastLive){ lastLive = live; markLive(live); }
 }
-
 function loop(){
   if(S.ready && !S.recording){ draw(); if(!video.paused) followPlayhead(); drawTimeline(); }
   requestAnimationFrame(loop);
@@ -683,27 +825,26 @@ requestAnimationFrame(loop);
    ===================================================================== */
 const ICON_PLAY = 'M8 5v14l11-7z', ICON_PAUSE = 'M6 5h4v14H6zm8 0h4v14h-4z';
 function togglePlay(){
-  if(!S.ready) return;
+  if(!S.ready) return toast('Load a video first', true);
   if(actx && actx.state === 'suspended') actx.resume();
   video.paused ? video.play().catch(()=>{}) : video.pause();
 }
 $('#btnPlay').onclick = togglePlay;
-video.onplay  = () => $('#icPlay').setAttribute('d', ICON_PAUSE);
-video.onpause = () => $('#icPlay').setAttribute('d', ICON_PLAY);
-video.onended = () => $('#icPlay').setAttribute('d', ICON_PLAY);
+video.addEventListener('play',  ()=>$('#icPlay').setAttribute('d', ICON_PAUSE));
+video.addEventListener('pause', ()=>$('#icPlay').setAttribute('d', ICON_PLAY));
+video.addEventListener('ended', ()=>$('#icPlay').setAttribute('d', ICON_PLAY));
 function seek(t){ if(S.ready){ video.currentTime = clamp(t, 0, S.dur); draw(); } }
 $('#btnBack').onclick = () => seek(video.currentTime - 5);
 $('#btnFwd').onclick  = () => seek(video.currentTime + 5);
 
 /* =====================================================================
-   CUES — model + list UI
+   CUES
    ===================================================================== */
 function addCue(start, end, text=''){
-  const c = { start, end, text, id: Math.random().toString(36).slice(2) };
+  const c = { start, end, text, words:null, id:uid() };
   S.cues.push(c); sortCues();
-  const i = S.cues.indexOf(c);
-  S.sel = i; renderCues(); save();
-  return i;
+  S.sel = S.cues.indexOf(c); renderCues(); save();
+  return S.sel;
 }
 function sortCues(){ S.cues.sort((a,b)=>a.start-b.start); }
 
@@ -729,7 +870,8 @@ function renderCues(){
         <input class="t mono" data-k="start" value="${tc(c.start,',')}">
         <span class="arw">▸</span>
         <input class="t mono" data-k="end" value="${tc(c.end,',')}">
-        <span class="dur">${(c.end-c.start).toFixed(2)}s</span>
+        ${c.words ? '<span class="wt" title="has word-level timing">◆ words</span>'
+                  : `<span class="dur">${(c.end-c.start).toFixed(2)}s</span>`}
         <span class="cue-acts">
           <button class="icb" data-a="play" title="Play this cue">▶</button>
           <button class="icb" data-a="split" title="Split at playhead (S)">⑂</button>
@@ -750,13 +892,12 @@ function markLive(i){
   document.querySelectorAll('.cue.live').forEach(e=>e.classList.remove('live'));
   if(i<0) return;
   const el = document.querySelector(`.cue[data-i="${i}"]`);
-  if(el){
-    el.classList.add('live');
-    const box = el.closest('.pane');
-    if(box && !video.paused){
-      const r = el.getBoundingClientRect(), br = box.getBoundingClientRect();
-      if(r.top < br.top+10 || r.bottom > br.bottom-10) el.scrollIntoView({block:'center', behavior:'smooth'});
-    }
+  if(!el) return;
+  el.classList.add('live');
+  const box = el.closest('.pane');
+  if(box && !video.paused){
+    const r = el.getBoundingClientRect(), br = box.getBoundingClientRect();
+    if(r.top < br.top+10 || r.bottom > br.bottom-10) el.scrollIntoView({block:'center', behavior:'smooth'});
   }
 }
 
@@ -764,14 +905,15 @@ $('#cueList').addEventListener('click', e => {
   const row = e.target.closest('.cue'); if(!row) return;
   const i = +row.dataset.i, c = S.cues[i];
   const a = e.target.closest('[data-a]')?.dataset.a;
-  if(a === 'del'){ S.cues.splice(i,1); S.sel = -1; renderCues(); save(); return; }
+  if(a === 'del'){ S.cues.splice(i,1); S.sel = -1; renderCues(); save(); drawTimeline(); return; }
   if(a === 'play'){ seek(c.start + 0.01); video.play().catch(()=>{}); S.sel=i; renderCues(); return; }
   if(a === 'split'){ splitCue(i); return; }
   if(a === 'merge'){
     const n = S.cues[i+1];
     if(!n) return toast('Nothing after this one', true);
-    c.end = n.end; c.text = (c.text.trim()+' '+n.text.trim()).trim();
-    S.cues.splice(i+1,1); renderCues(); save(); return;
+    const w = (c.words && n.words) ? [...c.words, ...n.words] : null;
+    c.end = n.end; c.text = (c.text.trim()+' '+n.text.trim()).trim(); c.words = w;
+    S.cues.splice(i+1,1); renderCues(); save(); drawTimeline(); return;
   }
   if(S.sel !== i){ S.sel = i; renderCues(); }
 });
@@ -781,41 +923,66 @@ $('#cueList').addEventListener('dblclick', e => {
 });
 $('#cueList').addEventListener('input', e => {
   const row = e.target.closest('.cue'); if(!row) return;
-  const c = S.cues[+row.dataset.i];
-  if(e.target.tagName === 'TEXTAREA'){ c.text = e.target.value; save(); draw(); drawTimeline(); }
+  if(e.target.tagName === 'TEXTAREA'){
+    retextCue(S.cues[+row.dataset.i], e.target.value);
+    save(); draw(); drawTimeline();
+  }
 });
 $('#cueList').addEventListener('change', e => {
   const row = e.target.closest('.cue'); if(!row) return;
-  const i = +row.dataset.i, c = S.cues[i], k = e.target.dataset.k;
+  const c = S.cues[+row.dataset.i], k = e.target.dataset.k;
   if(!k) return;
   const v = parseTC(e.target.value);
   if(v === null){ e.target.value = tc(c[k], ','); return toast('Use HH:MM:SS,mmm', true); }
+  const old = { s:c.start, e:c.end };
   c[k] = clamp(v, 0, S.dur || v);
   if(c.end <= c.start) c.end = c.start + 0.4;
-  sortCues(); S.sel = S.cues.indexOf(c); renderCues(); save();
+  shiftWords(c, old);
+  sortCues(); S.sel = S.cues.indexOf(c); renderCues(); save(); drawTimeline();
 });
 $('#cueList').addEventListener('focusin', e => {
   const row = e.target.closest('.cue'); if(!row) return;
   const i = +row.dataset.i;
-  if(S.sel !== i){ S.sel = i; document.querySelectorAll('.cue.sel').forEach(x=>x.classList.remove('sel')); row.classList.add('sel'); }
+  if(S.sel !== i){
+    S.sel = i;
+    document.querySelectorAll('.cue.sel').forEach(x=>x.classList.remove('sel'));
+    row.classList.add('sel');
+  }
 });
 $('#cueList').addEventListener('keydown', e => {
   if(e.key === 'Tab' && e.target.tagName === 'TEXTAREA' && !e.shiftKey){
-    const row = e.target.closest('.cue'), nxt = row.nextElementSibling;
+    const nxt = e.target.closest('.cue').nextElementSibling;
     if(nxt){ e.preventDefault(); nxt.querySelector('textarea').focus(); }
   }
 });
 
+/* keep word timings proportional when a cue is retimed */
+function shiftWords(c, old){
+  if(!c.words || !c.words.length) return;
+  const os = old.e - old.s, ns = c.end - c.start;
+  if(os <= 0){ c.words = null; return; }
+  const k = ns/os;
+  c.words.forEach(o => { o.t = c.start + (o.t - old.s)*k; o.d *= k; });
+}
+
 function splitCue(i){
   const c = S.cues[i], t = video.currentTime;
   if(t <= c.start + 0.05 || t >= c.end - 0.05) return toast('Move the playhead inside the cue first', true);
-  const words = c.text.trim().split(/\s+/);
-  const ratio = (t - c.start)/(c.end - c.start);
-  const k = clamp(Math.round(words.length*ratio), 0, words.length);
-  const rest = words.slice(k).join(' ');
-  const b = { start:t, end:c.end, text:rest, id:Math.random().toString(36).slice(2) };
-  c.end = t; c.text = words.slice(0,k).join(' ');
-  S.cues.splice(i+1, 0, b); S.sel = i+1; renderCues(); save();
+  let aTxt, bTxt, aW = null, bW = null;
+  if(c.words && c.words.length){
+    aW = c.words.filter(o => o.t < t);
+    bW = c.words.filter(o => o.t >= t);
+    aTxt = aW.map(o=>o.w).join(' '); bTxt = bW.map(o=>o.w).join(' ');
+    if(!aW.length) aW = null;
+    if(!bW.length) bW = null;
+  }else{
+    const words = c.text.trim().split(/\s+/).filter(Boolean);
+    const k = clamp(Math.round(words.length * (t - c.start)/(c.end - c.start)), 0, words.length);
+    aTxt = words.slice(0,k).join(' '); bTxt = words.slice(k).join(' ');
+  }
+  const b = { start:t, end:c.end, text:bTxt, words:bW, id:uid() };
+  c.end = t; c.text = aTxt; c.words = aW;
+  S.cues.splice(i+1, 0, b); S.sel = i+1; renderCues(); save(); drawTimeline();
 }
 
 $('#btnMark').onclick = () => {
@@ -827,25 +994,32 @@ $('#btnMark').onclick = () => {
     if(el){ el.focus(); el.scrollIntoView({block:'center'}); }
   });
 };
-$('#btnIn').onclick  = () => { const c = S.cues[S.sel]; if(!c) return toast('Select a cue first',true);
-  c.start = video.currentTime; if(c.end<=c.start) c.end=c.start+0.4; sortCues(); S.sel=S.cues.indexOf(c); renderCues(); save(); };
-$('#btnOut').onclick = () => { const c = S.cues[S.sel]; if(!c) return toast('Select a cue first',true);
-  c.end = Math.max(video.currentTime, c.start+0.2); renderCues(); save(); };
+$('#btnIn').onclick  = () => {
+  const c = S.cues[S.sel]; if(!c) return toast('Select a cue first',true);
+  const old = {s:c.start,e:c.end};
+  c.start = video.currentTime; if(c.end<=c.start) c.end=c.start+0.4;
+  shiftWords(c, old); sortCues(); S.sel=S.cues.indexOf(c); renderCues(); save();
+};
+$('#btnOut').onclick = () => {
+  const c = S.cues[S.sel]; if(!c) return toast('Select a cue first',true);
+  const old = {s:c.start,e:c.end};
+  c.end = Math.max(video.currentTime, c.start+0.2);
+  shiftWords(c, old); renderCues(); save();
+};
 $('#btnSort').onclick = () => { sortCues(); renderCues(); save(); toast('Sorted by start time'); };
 $('#btnClear').onclick = () => {
   if(!S.cues.length) return;
   if(confirm(`Delete all ${S.cues.length} cues? This cannot be undone.`)){
-    S.cues = []; S.sel = -1; renderCues(); save();
+    S.cues = []; S.sel = -1; renderCues(); save(); drawTimeline();
   }
 };
 
 /* =====================================================================
-   TIMELINE — waveform, cue blocks, drag to move / trim
+   TIMELINE
    ===================================================================== */
 function viewRange(){
   if(!S.zoom || S.zoom >= S.dur) return [0, S.dur || 1];
-  let a = clamp(S.view, 0, Math.max(0, S.dur - S.zoom));
-  return [a, S.zoom];
+  return [clamp(S.view, 0, Math.max(0, S.dur - S.zoom)), S.zoom];
 }
 function followPlayhead(){
   if(!S.zoom) return;
@@ -871,13 +1045,12 @@ function drawTimeline(){
   tcx.setTransform(dpr,0,0,dpr,0,0);
   tcx.clearRect(0,0,w,h);
   tcx.fillStyle = '#080a0c'; tcx.fillRect(0,0,w,h);
-  if(!S.ready){ return; }
+  if(!S.ready) return;
 
   const [a,d] = viewRange();
   const x = t => (t-a)/d*w;
   const RULER = 15, WAVE_H = h - RULER - 26, WAVE_Y = RULER;
 
-  // ruler
   tcx.fillStyle = '#0d1014'; tcx.fillRect(0,0,w,RULER);
   const targets = [0.1,0.25,0.5,1,2,5,10,15,30,60,120,300,600,900];
   const step = targets.find(s => (s/d)*w > 62) || 1800;
@@ -889,30 +1062,26 @@ function drawTimeline(){
     tcx.fillText(tc(t,'.',step<1), px+4, RULER/2);
   }
 
-  // waveform
   if(S.peaks){
     const mid = WAVE_Y + WAVE_H/2, N = S.peaks.length;
     tcx.fillStyle = '#2d3742';
     for(let px=0; px<w; px++){
       const t0 = a + px/w*d, t1 = a + (px+1)/w*d;
-      let i0 = Math.floor(t0/S.dur*N), i1 = Math.ceil(t1/S.dur*N);
-      i0 = clamp(i0,0,N-1); i1 = clamp(i1,i0+1,N);
+      let i0 = clamp(Math.floor(t0/S.dur*N),0,N-1), i1 = clamp(Math.ceil(t1/S.dur*N), i0+1, N);
       let mx = 0; for(let i=i0;i<i1;i++) if(S.peaks[i]>mx) mx = S.peaks[i];
-      const hh = Math.max(0.5, mx*WAVE_H*0.46);
-      tcx.fillRect(px, mid-hh, 1, hh*2);
+      tcx.fillRect(px, mid-Math.max(0.5, mx*WAVE_H*0.46), 1, Math.max(0.5, mx*WAVE_H*0.46)*2);
     }
   }else{
-    tcx.fillStyle = '#1b2027'; tcx.font = '10px "Chivo Mono",monospace'; tcx.textAlign='center';
-    tcx.fillStyle = '#333c47';
+    tcx.fillStyle = '#333c47'; tcx.font = '10px "Chivo Mono",monospace'; tcx.textAlign='center';
     tcx.fillText('decoding audio…', w/2, WAVE_Y+WAVE_H/2);
   }
 
-  // cue blocks
   const BY = h-24, BH = 20;
   S.cues.forEach((c,i)=>{
     const x0 = x(c.start), x1 = x(c.end);
     if(x1 < -20 || x0 > w+20) return;
-    const bw = Math.max(2, x1-x0), sel = i === S.sel, live = video.currentTime>=c.start && video.currentTime<c.end;
+    const bw = Math.max(2, x1-x0), sel = i === S.sel;
+    const live = video.currentTime>=c.start && video.currentTime<c.end;
     tcx.fillStyle = live ? '#ffb43d' : sel ? '#54d7e8' : '#39414e';
     tcx.globalAlpha = live||sel ? .92 : .8;
     tcx.fillRect(x0, BY, bw, BH);
@@ -928,74 +1097,144 @@ function drawTimeline(){
     }
   });
 
-  // playhead
   const px = Math.round(x(video.currentTime))+0.5;
   tcx.strokeStyle = '#ffb43d'; tcx.lineWidth = 1;
   tcx.beginPath(); tcx.moveTo(px,0); tcx.lineTo(px,h); tcx.stroke();
   tcx.fillStyle = '#ffb43d';
   tcx.beginPath(); tcx.moveTo(px-4,0); tcx.lineTo(px+4,0); tcx.lineTo(px,6); tcx.closePath(); tcx.fill();
 }
-addEventListener('resize', () => { drawTimeline(); });
+addEventListener('resize', drawTimeline);
 
-/* timeline interaction */
+/* ---------------------------------------------------------------
+   Dragging — timeline blocks AND the caption on the preview.
+   Every drag goes through one begin/end pair, and the end fires on
+   pointerup, pointercancel, lostpointercapture, Escape, a stray
+   pointermove with no buttons held, and window blur. That is what
+   stops a drag from following the mouse after you leave the area.
+   --------------------------------------------------------------- */
 let drag = null;
+
+function endDrag(commit = true){
+  if(!drag) return;
+  const d = drag; drag = null;
+  if(d.kind === 'cue' && commit){
+    const c = S.cues[d.i]; sortCues(); S.sel = S.cues.indexOf(c);
+    renderCues(); save();
+  }
+  if(d.kind === 'cue' && !commit){
+    const c = S.cues[d.i]; c.start = d.s0; c.end = d.e0;
+    if(c.words) c.words = d.w0;
+    renderCues();
+  }
+  if(d.kind === 'cap'){
+    if(!commit){ S.style.bottom = d.b0; S.style.xOffset = d.x0; syncStyleUI(); }
+    save();
+  }
+  try{ d.el.releasePointerCapture(d.pid); }catch(_){}
+  tlc.style.cursor = 'crosshair';
+  canvas.classList.remove('grabbing');
+  drawTimeline(); draw();
+}
+addEventListener('pointerup', () => endDrag(true));
+addEventListener('pointercancel', () => endDrag(false));
+addEventListener('blur', () => endDrag(true));
+tlc.addEventListener('lostpointercapture', () => endDrag(true));
+canvas.addEventListener('lostpointercapture', () => endDrag(true));
+
 function tlTime(e){
   const r = tlc.getBoundingClientRect(), [a,d] = viewRange();
   return a + clamp((e.clientX - r.left)/r.width, 0, 1)*d;
 }
 tlc.addEventListener('pointerdown', e => {
-  if(!S.ready) return;
+  if(!S.ready || drag) return;
   const r = tlc.getBoundingClientRect(), y = e.clientY - r.top, h = r.height;
-  const t = tlTime(e), [a,d] = viewRange(), pxPerS = r.width/d;
+  const t = tlTime(e), pxPerS = r.width/viewRange()[1];
   if(y > h-26){
     for(let i=S.cues.length-1;i>=0;i--){
       const c = S.cues[i];
       if(t >= c.start - 4/pxPerS && t <= c.end + 4/pxPerS){
-        const edge = (t - c.start)*pxPerS < 6 ? 'start' : (c.end - t)*pxPerS < 6 ? 'end' : 'move';
-        drag = { i, mode:edge, t0:t, s0:c.start, e0:c.end };
-        S.sel = i; renderCues(); tlc.setPointerCapture(e.pointerId);
-        tlc.style.cursor = edge==='move' ? 'grabbing' : 'ew-resize';
+        const mode = (t - c.start)*pxPerS < 6 ? 'start' : (c.end - t)*pxPerS < 6 ? 'end' : 'move';
+        drag = { kind:'cue', i, mode, t0:t, s0:c.start, e0:c.end,
+                 w0:c.words ? c.words.map(o=>({...o})) : null, el:tlc, pid:e.pointerId };
+        S.sel = i; renderCues();
+        tlc.setPointerCapture(e.pointerId);
+        tlc.style.cursor = mode==='move' ? 'grabbing' : 'ew-resize';
         return;
       }
     }
   }
-  drag = { mode:'seek' }; tlc.setPointerCapture(e.pointerId); seek(t);
+  drag = { kind:'seek', el:tlc, pid:e.pointerId };
+  tlc.setPointerCapture(e.pointerId);
+  seek(t);
 });
 tlc.addEventListener('pointermove', e => {
   if(!S.ready) return;
-  const r = tlc.getBoundingClientRect(), y = e.clientY - r.top, h = r.height;
+  if(drag && e.buttons === 0) return endDrag(true);        // mouse released elsewhere
   if(!drag){
+    const r = tlc.getBoundingClientRect(), y = e.clientY - r.top;
     const t = tlTime(e), pxPerS = r.width/viewRange()[1];
     let cur = 'crosshair';
-    if(y > h-26) for(const c of S.cues){
+    if(y > r.height-26) for(const c of S.cues){
       if(t >= c.start-4/pxPerS && t <= c.end+4/pxPerS){
         cur = ((t-c.start)*pxPerS < 6 || (c.end-t)*pxPerS < 6) ? 'ew-resize' : 'grab'; break;
       }
     }
     tlc.style.cursor = cur; return;
   }
+  if(drag.el !== tlc) return;
   const t = tlTime(e);
-  if(drag.mode === 'seek'){ seek(t); return; }
+  if(drag.kind === 'seek') return seek(t);
   const c = S.cues[drag.i], dt = t - drag.t0;
+  const old = { s:c.start, e:c.end };
   if(drag.mode === 'move'){ const len = drag.e0-drag.s0; c.start = clamp(drag.s0+dt, 0, S.dur-len); c.end = c.start+len; }
   else if(drag.mode === 'start') c.start = clamp(drag.s0+dt, 0, c.end-0.15);
   else c.end = clamp(drag.e0+dt, c.start+0.15, S.dur);
+  if(drag.w0){ c.words = drag.w0.map(o=>({...o})); shiftWords(c, { s:drag.s0, e:drag.e0 }); }
   drawTimeline(); draw();
-});
-tlc.addEventListener('pointerup', e => {
-  if(drag && drag.mode !== 'seek'){ const c = S.cues[drag.i]; sortCues(); S.sel = S.cues.indexOf(c); renderCues(); save(); }
-  drag = null; tlc.style.cursor='crosshair';
-  try{ tlc.releasePointerCapture(e.pointerId); }catch(_){}
 });
 tlc.addEventListener('wheel', e => {
   if(!S.ready || !S.zoom) return;
   e.preventDefault();
-  S.view = clamp(S.view + e.deltaY*0.01*S.zoom*0.3, 0, Math.max(0, S.dur - S.zoom));
+  S.view = clamp(S.view + e.deltaY*0.003*S.zoom, 0, Math.max(0, S.dur - S.zoom));
   drawTimeline();
 }, {passive:false});
 
+/* ---- drag the caption itself, right on the video ---- */
+function canvasPt(e){
+  const r = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) / r.width  * canvas.width,
+    y: (e.clientY - r.top)  / r.height * canvas.height,
+    sx: canvas.width / r.width, sy: canvas.height / r.height
+  };
+}
+const inCap = p => capBox && p.x >= capBox.x && p.x <= capBox.x+capBox.w
+                          && p.y >= capBox.y && p.y <= capBox.y+capBox.h;
+
+canvas.addEventListener('pointerdown', e => {
+  if(!S.ready || drag || S.recording) return;
+  const p = canvasPt(e);
+  if(!inCap(p)) return;
+  e.preventDefault();
+  drag = { kind:'cap', px:p.x, py:p.y, b0:S.style.bottom, x0:S.style.xOffset, el:canvas, pid:e.pointerId };
+  canvas.setPointerCapture(e.pointerId);
+  canvas.classList.add('grabbing');
+});
+canvas.addEventListener('pointermove', e => {
+  if(!S.ready) return;
+  if(drag && drag.kind === 'cap'){
+    if(e.buttons === 0) return endDrag(true);
+    const p = canvasPt(e);
+    S.style.xOffset = clamp(drag.x0 + (p.x - drag.px)/canvas.width*100, -45, 45);
+    S.style.bottom  = clamp(drag.b0 - (p.y - drag.py)/canvas.height*100, 0, 92);
+    syncStyleUI(); draw();
+    return;
+  }
+  if(!drag) canvas.classList.toggle('grab', inCap(canvasPt(e)));
+});
+
 /* =====================================================================
-   SUBTITLE FILES — import & export
+   SUBTITLE FILES
    ===================================================================== */
 function toSRT(){
   return S.cues.map((c,i)=>`${i+1}\n${tc(c.start,',')} --> ${tc(c.end,',')}\n${c.text.trim()||'…'}\n`).join('\n');
@@ -1011,14 +1250,13 @@ function parseSubs(txt){
   while((m = re.exec(txt))){
     const s = parseTC(m[1]), e = parseTC(m[2]);
     if(s === null || e === null) continue;
-    const text = m[3].split('\n').filter(l => !/^\s*\d+\s*$/.test(l)).join('\n')
-      .replace(/<[^>]+>/g,'').trim();
-    out.push({ start:s, end:Math.max(e, s+0.1), text, id:Math.random().toString(36).slice(2) });
+    const text = m[3].split('\n').filter(l => !/^\s*\d+\s*$/.test(l)).join('\n').replace(/<[^>]+>/g,'').trim();
+    out.push({ start:s, end:Math.max(e, s+0.1), text, words:null, id:uid() });
   }
   return out;
 }
 $('#btnImport').onclick = () => $('#subPick').click();
-$('#subPick').onchange = e => { if(e.target.files[0]) readSubFile(e.target.files[0]); e.target.value=''; };
+$('#subPick').onchange = e => { const f = e.target.files[0]; e.target.value=''; if(f) readSubFile(f); };
 async function readSubFile(f){
   const cues = parseSubs(await f.text());
   if(!cues.length) return toast('No cues found in that file', true);
@@ -1030,12 +1268,12 @@ function download(name, data, type){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 20000);
+  setTimeout(()=>URL.revokeObjectURL(a.href), 30000);
 }
 const baseName = () => (S.file?.name || 'subtitles').replace(/\.[^.]+$/,'');
 
 /* =====================================================================
-   AUTO-TRANSCRIBE — Whisper on-device via transformers.js
+   AUTO-TRANSCRIBE
    ===================================================================== */
 const MODELS = [
   ['onnx-community/whisper-tiny',  'Tiny · ~40 MB · fastest'],
@@ -1050,7 +1288,7 @@ const LANGS = [['auto','Detect automatically'],['english','English'],['spanish',
   ['hebrew','Hebrew'],['thai','Thai'],['romanian','Romanian'],['hungarian','Hungarian'],['danish','Danish'],
   ['finnish','Finnish'],['norwegian','Norwegian'],['malay','Malay'],['bengali','Bengali'],['urdu','Urdu']];
 
-let asrPrefs = { model:'onnx-community/whisper-base', lang:'auto', translate:false, gpu:true };
+let asrPrefs = { model:'onnx-community/whisper-base', lang:'auto', translate:false, gpu:true, words:true, perLine:5 };
 let transcriber = null, loadedKey = '';
 
 function setStatus(on, msg, pct, sub, cancellable, rec){
@@ -1063,12 +1301,41 @@ function setStatus(on, msg, pct, sub, cancellable, rec){
   $('#asrCancelWrap').style.display = cancellable ? 'block' : 'none';
 }
 
+/* group Whisper's word stream into readable lines */
+function wordsToCues(words, perLine){
+  const cues = [];
+  let cur = [];
+  const flush = () => {
+    if(!cur.length) return;
+    cues.push({
+      start: cur[0].t,
+      end: cur[cur.length-1].t + cur[cur.length-1].d,
+      text: cur.map(o=>o.w).join(' '),
+      words: cur, id: uid()
+    });
+    cur = [];
+  };
+  words.forEach((o,i) => {
+    cur.push(o);
+    const nxt = words[i+1];
+    const gap = nxt ? nxt.t - (o.t + o.d) : Infinity;
+    const span = o.t + o.d - cur[0].t;
+    const sentenceEnd = /[.!?…]["')\]]?$/.test(o.w);
+    if(cur.length >= perLine || gap > 0.7 || span > 4.5 || (sentenceEnd && cur.length >= 2)) flush();
+  });
+  flush();
+  return cues;
+}
+
 async function autoTranscribe(){
   if(S.transcribing) return;
+  if(!S.ready) return toast('Load a video first', true);
   if(!S.audio) return toast('Audio is still decoding — or this file has no readable audio track', true);
+  if(S.cues.length && !confirm(`Replace the ${S.cues.length} existing cues with a fresh transcript?`)) return;
+
   S.transcribing = true; S.cancelASR = false;
   $('#btnAuto').disabled = true;
-  setStatus(true, 'loading model', 0, 'first run downloads the model, then it is cached by the browser', true);
+  setStatus(true, 'loading model', 0, 'first run downloads the model, then it is cached', true);
 
   try{
     const TJS = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0');
@@ -1080,7 +1347,8 @@ async function autoTranscribe(){
     }
     const key = asrPrefs.model + '|' + device;
     if(!transcriber || loadedKey !== key){
-      transcriber?.dispose?.();
+      try{ transcriber?.dispose?.(); }catch(_){}
+      transcriber = null;
       const files = {};
       transcriber = await TJS.pipeline('automatic-speech-recognition', asrPrefs.model, {
         device,
@@ -1091,11 +1359,9 @@ async function autoTranscribe(){
           if(p.status === 'progress' && p.total){
             files[p.file] = p.loaded/p.total;
             const vals = Object.values(files);
-            const pct = vals.reduce((a,b)=>a+b,0)/vals.length*100;
-            setStatus(true, 'downloading model', pct, (p.file||'').split('/').pop(), true);
-          }else if(p.status === 'ready'){
-            setStatus(true, 'model ready', 100, '', true);
-          }
+            setStatus(true, 'downloading model',
+              vals.reduce((a,b)=>a+b,0)/vals.length*100, (p.file||'').split('/').pop(), true);
+          }else if(p.status === 'ready') setStatus(true, 'model ready', 100, '', true);
         }
       });
       loadedKey = key;
@@ -1103,7 +1369,7 @@ async function autoTranscribe(){
     if(S.cancelASR) throw new Error('cancelled');
 
     setStatus(true, device === 'webgpu' ? 'transcribing · gpu' : 'transcribing · cpu', 0,
-      'this runs entirely on your machine', true);
+      'running entirely on your machine', true);
 
     const total = S.audio.length/16000;
     let chunkStart = 0, buf = '';
@@ -1111,41 +1377,49 @@ async function autoTranscribe(){
       skip_prompt: true,
       callback_function: t => { buf = (buf + t).slice(-180); },
       on_chunk_start: t => { chunkStart = t; },
-      on_chunk_end: t => {
-        setStatus(true, undefined, clamp((chunkStart + t)/total*100, 0, 99), buf.trim(), true);
-      },
-      on_finalize: () => {}
+      on_chunk_end: t => setStatus(true, undefined, clamp((chunkStart+t)/total*100, 0, 99), buf.trim(), true)
     }) : null;
 
     const res = await transcriber(S.audio, {
       chunk_length_s: 30,
       stride_length_s: 5,
-      return_timestamps: true,
+      return_timestamps: asrPrefs.words ? 'word' : true,
       task: asrPrefs.translate ? 'translate' : 'transcribe',
       ...(asrPrefs.lang !== 'auto' ? { language: asrPrefs.lang } : {}),
       streamer
     });
     if(S.cancelASR) throw new Error('cancelled');
 
-    const chunks = (res.chunks || []).filter(c => (c.text||'').trim());
-    if(!chunks.length) throw new Error('Whisper found no speech in this audio');
+    const raw = (res.chunks || []).filter(c => (c.text||'').trim());
+    if(!raw.length) throw new Error('Whisper found no speech in this audio');
 
-    const cues = [];
-    chunks.forEach((c,i) => {
-      let [s,e] = c.timestamp || [];
-      if(s == null) s = i ? cues[cues.length-1].end : 0;
-      if(e == null) e = (chunks[i+1]?.timestamp?.[0]) ?? Math.min(total, s + 3);
-      if(e <= s) e = s + 0.6;
-      cues.push({ start:s, end:e, text:c.text.trim(), id:Math.random().toString(36).slice(2) });
-    });
+    let cues;
+    if(asrPrefs.words){
+      const words = raw.map((c,i) => {
+        let [s,e] = c.timestamp || [];
+        if(s == null) s = i ? raw[i-1].timestamp?.[1] ?? 0 : 0;
+        if(e == null || e <= s) e = s + 0.28;
+        return { w: c.text.trim(), t: s, d: e - s };
+      }).filter(o => o.w);
+      cues = wordsToCues(words, asrPrefs.perLine);
+    }else{
+      cues = raw.map((c,i) => {
+        let [s,e] = c.timestamp || [];
+        if(s == null) s = i ? raw[i-1].timestamp?.[1] ?? 0 : 0;
+        if(e == null) e = raw[i+1]?.timestamp?.[0] ?? Math.min(total, s+3);
+        if(e <= s) e = s + 0.6;
+        return { start:s, end:e, text:c.text.trim(), words:null, id:uid() };
+      });
+    }
+
     S.cues = cues; S.sel = -1; sortCues(); renderCues(); save(); drawTimeline();
     setStatus(false);
-    toast(`Transcribed ${cues.length} cues — review and fix anything that looks off`);
+    toast(`Transcribed ${cues.length} cues${asrPrefs.words ? ' with word timing' : ''} — review before exporting`);
   }catch(err){
     console.error(err);
     setStatus(false);
-    toast(/cancel/i.test(err.message) ? 'Transcription cancelled'
-      : 'Transcription failed: ' + (err.message||err), !/cancel/i.test(err.message));
+    const cancelled = /cancel/i.test(err.message||'');
+    toast(cancelled ? 'Transcription cancelled' : 'Transcription failed: ' + (err.message||err), !cancelled);
   }finally{
     S.transcribing = false; $('#btnAuto').disabled = false;
   }
@@ -1157,159 +1431,245 @@ $('#btnAsrCancel').onclick = () => {
 };
 
 /* =====================================================================
-   BURN-IN EXPORT — canvas + MediaRecorder, entirely local
+   BURN-IN EXPORT
    ===================================================================== */
 function pickMime(){
-  const opts = [
+  return [
     'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a',
     'video/mp4',
     'video/webm;codecs=vp9,opus',
     'video/webm;codecs=vp8,opus',
     'video/webm'
-  ];
-  return opts.find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
+  ].find(t => { try{ return MediaRecorder.isTypeSupported(t); }catch(_){ return false; } }) || '';
 }
+
 let recorder = null, recStop = null;
 
 async function burnIn(scalePct, quality){
   if(!S.ready) return toast('Load a video first', true);
-  if(S.recording) return;
+  if(S.recording || S.transcribing) return;
+  if(typeof MediaRecorder === 'undefined') return toast('This browser has no MediaRecorder', true);
   const mime = pickMime();
-  if(!mime) return toast('This browser cannot record video — use Chrome or Edge', true);
-
-  buildAudioGraph();
-  if(actx?.state === 'suspended') await actx.resume();
-
-  const W = Math.round(canvas.width  * scalePct/100 / 2)*2;
-  const H = Math.round(canvas.height * scalePct/100 / 2)*2;
-  const off = document.createElement('canvas'); off.width = W; off.height = H;
-  const ox = off.getContext('2d', { alpha:false });
-
-  const stream = off.captureStream(30);
-  streamDest?.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+  if(!mime) return toast('This browser cannot record video — try Chrome or Edge', true);
+  if(!S.cues.length && !confirm('There are no cues — export the video with no captions anyway?')) return;
 
   const chunks = [];
-  recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: quality });
-  recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+  let raf = 0, guard = 0, stopped = false;
 
-  const done = new Promise(res => { recorder.onstop = res; });
+  try{
+    S.recording = true;
+    $('#burnBtn').disabled = true;
+    switchTab('cues');
+    setStatus(true, 'preparing', 0, 'seeking to the start…', true, true);
 
-  S.recording = true;
-  $('#burnBtn').disabled = true;
-  setStatus(true, 'rendering · real time', 0, `${W}×${H} · ${mime.split(';')[0]}`, true, true);
-  switchTab('cues');
+    buildAudioGraph();
+    if(actx && actx.state === 'suspended'){ try{ await actx.resume(); }catch(_){} }
 
-  video.pause();
-  video.currentTime = 0;
-  await new Promise(r => video.addEventListener('seeked', r, {once:true}));
-  video.playbackRate = 1;
+    const W = Math.max(2, Math.round(canvas.width  * scalePct/100 / 2)*2);
+    const H = Math.max(2, Math.round(canvas.height * scalePct/100 / 2)*2);
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const ox = off.getContext('2d', { alpha:false });
 
-  let raf;
-  const tick = () => {
-    if(!S.recording) return;
-    drawFrame(ox, W, H, video.currentTime);
-    setStatus(true, undefined, video.currentTime/S.dur*100, undefined, true, true);
-    $('#tcNow').textContent = tc(video.currentTime);
-    raf = requestAnimationFrame(tick);
-  };
-  recorder.start(1000);
-  await video.play();
-  tick();
-
-  recStop = () => {
-    if(!S.recording) return;
-    S.recording = false;
-    cancelAnimationFrame(raf);
+    // make sure the very first captured frame is real, not blank
     video.pause();
-    try{ recorder.state !== 'inactive' && recorder.stop(); }catch(_){}
-  };
-  video.addEventListener('ended', recStop, {once:true});
+    video.playbackRate = 1;
+    await seekTo(0);
+    drawFrame(ox, W, H, 0);
 
-  await done;
-  video.removeEventListener('ended', recStop);
-  S.recording = false;
-  video.playbackRate = +$('#rate').value;
-  $('#burnBtn').disabled = false;
-  setStatus(false);
+    const stream = off.captureStream(30);
+    if(!stream.getVideoTracks().length) throw new Error('the canvas produced no video track');
 
-  if(!chunks.length) return toast('Nothing was recorded', true);
-  const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
-  const blob = new Blob(chunks, { type: mime.split(';')[0] });
-  download(`${baseName()}-subtitled.${ext}`, blob);
-  toast(`Saved ${baseName()}-subtitled.${ext} · ${(blob.size/1048576).toFixed(1)} MB`);
+    let audioTracks = streamDest ? streamDest.stream.getAudioTracks() : [];
+    if(!audioTracks.length && video.captureStream){
+      try{ audioTracks = video.captureStream().getAudioTracks(); }catch(_){}
+    }
+    audioTracks.forEach(t => stream.addTrack(t));
+
+    recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: quality });
+    recorder.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+
+    const finished = new Promise((res, rej) => {
+      recorder.onstop = res;
+      recorder.onerror = ev => rej(new Error('recorder error: ' + (ev.error?.name || 'unknown')));
+    });
+
+    setStatus(true, 'rendering · real time', 0,
+      `${W}×${H} · ${audioTracks.length ? 'with audio' : 'NO audio track'} · ${mime.split(';')[0]}`, true, true);
+
+    const paint = () => {
+      if(stopped) return;
+      drawFrame(ox, W, H, video.currentTime);
+      setStatus(true, undefined, S.dur ? video.currentTime/S.dur*100 : 0, undefined, true, true);
+      $('#tcNow').textContent = tc(video.currentTime);
+    };
+    const pump = () => { if(stopped) return; paint(); raf = requestAnimationFrame(pump); };
+
+    recStop = () => {
+      if(stopped) return;
+      stopped = true;
+      cancelAnimationFrame(raf);
+      clearInterval(guard);
+      try{ video.pause(); }catch(_){}
+      try{ if(recorder.state !== 'inactive') recorder.stop(); }catch(_){}
+    };
+    video.addEventListener('ended', recStop, { once:true });
+
+    // Backstop: rAF is throttled hard in a background tab, and some files
+    // never fire `ended`. This keeps frames moving and guarantees a stop.
+    guard = setInterval(() => {
+      if(stopped) return;
+      paint();
+      if(video.paused && !stopped) video.play().catch(()=>{});
+      if(S.dur && video.currentTime >= S.dur - 0.06) recStop();
+    }, 250);
+
+    recorder.start(1000);
+    await video.play();
+    pump();
+    await finished;
+    video.removeEventListener('ended', recStop);
+
+    if(!chunks.length) throw new Error('the recorder produced no data');
+    const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
+    const blob = new Blob(chunks, { type: mime.split(';')[0] });
+    download(`${baseName()}-subtitled.${ext}`, blob);
+    toast(`Saved ${baseName()}-subtitled.${ext} · ${(blob.size/1048576).toFixed(1)} MB`);
+  }catch(err){
+    console.error('burn-in', err);
+    toast('Export failed: ' + (err.message || err), true);
+  }finally{
+    stopped = true;
+    cancelAnimationFrame(raf);
+    clearInterval(guard);
+    try{ if(recorder && recorder.state !== 'inactive') recorder.stop(); }catch(_){}
+    recorder = null; recStop = null;
+    S.recording = false;
+    try{ video.pause(); }catch(_){}
+    video.playbackRate = +$('#rate').value;
+    $('#burnBtn').disabled = false;
+    setStatus(false);
+    draw();
+  }
 }
-function stopBurn(){ recStop?.(); }
+function stopBurn(){ if(recStop) recStop(); else if(S.recording) toast('Not recording', true); }
 
 /* =====================================================================
-   PANELS — style + export (built in JS to keep the markup lean)
+   PANELS
    ===================================================================== */
 const FONTS = ['Archivo','Chivo Mono','Arial','Helvetica','Verdana','Tahoma','Trebuchet MS',
   'Georgia','Times New Roman','Courier New','Impact'];
 
 $('#pane-style').innerHTML = `
   <div class="grp">
+    <span class="lbl">Caption style</span>
+    <div class="seg" id="sMode">
+      <button data-v="classic" class="on">CLASSIC</button>
+      <button data-v="pop">WORD POP</button>
+    </div>
+    <p class="note" id="modeNote"></p>
+  </div>
+  <div class="grp">
     <span class="lbl">Typeface</span>
     <div class="row"><label>Font</label><div class="f">
       <select id="sFont">${FONTS.map(f=>`<option${f==='Archivo'?' selected':''}>${f}</option>`).join('')}</select>
     </div></div>
     <div class="row"><label>Size</label><div class="f">
-      <input type="range" id="sSize" min="2" max="14" step="0.1" value="5.6"><span class="val" id="vSize">5.6</span>
+      <input type="range" id="sSize" min="2" max="16" step="0.1"><span class="val" id="vSize"></span>
     </div></div>
     <div class="row"><label>Weight</label><div class="f">
       <div class="seg" id="sWeight">
-        <button data-v="400">REGULAR</button><button data-v="700" class="on">BOLD</button><button data-v="900">BLACK</button>
+        <button data-v="400">REGULAR</button><button data-v="700">BOLD</button><button data-v="900">BLACK</button>
       </div>
     </div></div>
     <div class="row"><label>Line gap</label><div class="f">
-      <input type="range" id="sGap" min="1" max="1.8" step="0.01" value="1.22"><span class="val" id="vGap">1.22</span>
+      <input type="range" id="sGap" min="1" max="1.8" step="0.01"><span class="val" id="vGap"></span>
     </div></div>
     <div class="row"><label>Uppercase</label><div class="f"><input type="checkbox" id="sUpper"></div></div>
   </div>
   <div class="grp">
     <span class="lbl">Colour &amp; legibility</span>
-    <div class="row"><label>Text</label><div class="f"><input type="color" id="sColor" value="#ffffff"></div></div>
+    <div class="row"><label>Text</label><div class="f">
+      <input type="color" id="sColor"><span class="hint" id="textColourNote"></span>
+    </div></div>
     <div class="row"><label>Outline</label><div class="f">
-      <input type="color" id="sOutColor" value="#000000">
-      <input type="range" id="sOutline" min="0" max="40" step="1" value="14"><span class="val" id="vOutline">14</span>
+      <input type="color" id="sOutColor">
+      <input type="range" id="sOutline" min="0" max="40" step="1"><span class="val" id="vOutline"></span>
     </div></div>
-    <div class="row"><label>Plate</label><div class="f">
-      <input type="color" id="sBoxColor" value="#000000">
-      <input type="range" id="sBox" min="0" max="100" step="1" value="45"><span class="val" id="vBox">45</span>
+    <div class="row"><label>Background</label><div class="f">
+      <input type="color" id="sBoxColor">
+      <input type="range" id="sBox" min="0" max="100" step="1"><span class="val" id="vBox"></span>
     </div></div>
-    <div class="row"><label>Drop shadow</label><div class="f"><input type="checkbox" id="sShadow" checked></div></div>
+    <div class="row"><label>Drop shadow</label><div class="f"><input type="checkbox" id="sShadow"></div></div>
+  </div>
+  <div class="grp off" id="grpPop">
+    <span class="lbl">Word pop</span>
+    <div class="row" style="align-items:flex-start"><label style="padding-top:5px">Word colours</label>
+      <div class="f pal" id="sPal"></div>
+    </div>
+    <div class="row"><label>Colour by</label><div class="f">
+      <div class="seg" id="sPerLine">
+        <button data-v="0" class="on">EACH WORD</button><button data-v="1">EACH LINE</button>
+      </div>
+    </div></div>
+    <div class="row"><label>Rise height</label><div class="f">
+      <input type="range" id="sRise" min="0" max="200" step="5"><span class="val" id="vRise"></span>
+    </div></div>
+    <div class="row"><label>Rise speed</label><div class="f">
+      <input type="range" id="sAnim" min="60" max="600" step="10"><span class="val" id="vAnim"></span>
+    </div></div>
+    <div class="row"><label>Pop scale</label><div class="f">
+      <input type="range" id="sPop" min="0" max="60" step="1"><span class="val" id="vPop"></span>
+    </div></div>
+    <div class="row"><label>Ghost ahead</label><div class="f">
+      <input type="range" id="sGhost" min="0" max="60" step="1"><span class="val" id="vGhost"></span>
+    </div></div>
+    <p class="note">Each word rises into place as it is spoken, taking the next colour in the
+    row above. Whisper's word-level timing drives it; on hand-typed cues the words are spaced
+    evenly across the cue instead.</p>
   </div>
   <div class="grp">
     <span class="lbl">Placement</span>
     <div class="row"><label>Align</label><div class="f">
       <div class="seg" id="sAlign">
-        <button data-v="left">LEFT</button><button data-v="center" class="on">CENTER</button><button data-v="right">RIGHT</button>
+        <button data-v="left">LEFT</button><button data-v="center">CENTER</button><button data-v="right">RIGHT</button>
       </div>
     </div></div>
-    <div class="row"><label>From bottom</label><div class="f">
-      <input type="range" id="sBottom" min="0" max="80" step="0.5" value="7"><span class="val" id="vBottom">7%</span>
+    <div class="row"><label>Height</label><div class="f">
+      <input type="range" id="sBottom" min="0" max="92" step="0.5"><span class="val" id="vBottom"></span>
+    </div></div>
+    <div class="row"><label>Sideways</label><div class="f">
+      <input type="range" id="sX" min="-45" max="45" step="0.5"><span class="val" id="vX"></span>
     </div></div>
     <div class="row"><label>Max width</label><div class="f">
-      <input type="range" id="sWidth" min="30" max="100" step="1" value="82"><span class="val" id="vWidth">82%</span>
+      <input type="range" id="sWidth" min="30" max="100" step="1"><span class="val" id="vWidth"></span>
     </div></div>
-    <p class="note">Sizes are a percentage of the frame height, so the preview is pixel-identical
-    to the burned-in export at any resolution.</p>
+    <div style="display:flex;gap:7px;margin-top:4px">
+      <button class="btn ghost sm" id="sCentre">Re-centre</button>
+    </div>
+    <p class="note"><b>Just drag the caption on the video</b> to place it — the two sliders above
+    follow along. Sizes are a percentage of the frame, so the preview matches the export exactly.</p>
   </div>
   <div class="grp">
     <span class="lbl">Presets</span>
     <div style="display:flex;gap:7px;flex-wrap:wrap">
       <button class="btn ghost sm" data-preset="broadcast">Broadcast</button>
-      <button class="btn ghost sm" data-preset="social">Social / bold</button>
+      <button class="btn ghost sm" data-preset="karaoke">Word pop</button>
+      <button class="btn ghost sm" data-preset="social">Social bold</button>
       <button class="btn ghost sm" data-preset="netflix">Clean plate</button>
       <button class="btn ghost sm" data-preset="minimal">Hairline</button>
     </div>
+    <div style="margin-top:9px"><button class="btn ghost sm" id="sReset">Reset all styling</button></div>
   </div>`;
 
 $('#pane-export').innerHTML = `
   <div class="grp">
     <span class="lbl">Subtitle files · instant</span>
     <p class="note" style="margin:0 0 11px">Sidecar files keep the original video untouched. Drop the
-    <code>.srt</code> next to the video with the same name and most players (VLC, Plex, mpv) pick it up
-    on their own; YouTube, Vimeo and Premiere all import them directly.</p>
+    <code>.srt</code> next to the video with the same name and VLC, Plex and mpv pick it up on their own;
+    YouTube and Premiere import them directly. Word-pop styling is a burn-in-only effect —
+    <code>.srt</code> has no way to express it.</p>
     <div style="display:flex;gap:7px;flex-wrap:wrap">
       <button class="btn amber sm" id="xSRT">Download .srt</button>
       <button class="btn ghost sm" id="xVTT">Download .vtt</button>
@@ -1318,14 +1678,12 @@ $('#pane-export').innerHTML = `
   </div>
   <div class="grp">
     <span class="lbl">Burn into the video</span>
-    <p class="note" style="margin:0 0 11px">Re-encodes locally with the captions painted onto every frame —
-    permanent, and needed for TikTok, Reels and Shorts. It renders in <b>real time</b>, so a 3-minute clip
-    takes about 3 minutes. Keep this tab in the foreground while it runs.</p>
+    <p class="note" style="margin:0 0 11px">Re-encodes locally with the captions painted onto every frame.
+    It renders in <b>real time</b> — a 3-minute clip takes about 3 minutes — and the tab must stay
+    visible, because browsers throttle background rendering.</p>
     <div class="row"><label>Resolution</label><div class="f">
       <select id="xScale">
-        <option value="100" selected>Original</option>
-        <option value="75">75%</option>
-        <option value="50">50%</option>
+        <option value="100" selected>Original</option><option value="75">75%</option><option value="50">50%</option>
       </select>
     </div></div>
     <div class="row"><label>Bitrate</label><div class="f">
@@ -1343,72 +1701,113 @@ $('#pane-export').innerHTML = `
   </div>
   <div class="grp">
     <span class="lbl">Cost</span>
-    <p class="note" style="margin:0">Free, with no account and no server: the video is read straight off your
-    disk, Whisper runs on your own CPU/GPU, and the encoder is the one already built into your browser.
-    The only network request this page ever makes is the one-time model download from the Hugging Face CDN
-    (cached afterwards) plus the webfonts.</p>
+    <p class="note" style="margin:0">Free, with no account and no server: the video is read straight off
+    your disk, Whisper runs on your own CPU/GPU, and the encoder is the one built into your browser.
+    The only network request is the one-time model download plus the webfonts.</p>
   </div>`;
 
-/* style bindings */
-const bindRange = (id, key, valId, suffix='') => {
-  const el = $(id);
-  el.value = S.style[key];
-  const upd = () => { S.style[key] = +el.value; if(valId) $(valId).textContent = el.value + suffix; draw(); save(); };
-  el.oninput = upd; upd();
-};
-bindRange('#sSize','size','#vSize');
-bindRange('#sGap','lineGap','#vGap');
-bindRange('#sOutline','outline','#vOutline');
-bindRange('#sBox','box','#vBox');
-bindRange('#sBottom','bottom','#vBottom','%');
-bindRange('#sWidth','width','#vWidth','%');
-['sColor:color','sOutColor:outlineColor','sBoxColor:boxColor'].forEach(p=>{
-  const [id,key] = p.split(':'); const el = $('#'+id);
-  el.value = S.style[key];
-  el.oninput = () => { S.style[key] = el.value; draw(); save(); };
+/* ---- style bindings ---- */
+const RANGES = [
+  ['#sSize','size','#vSize',''],   ['#sGap','lineGap','#vGap',''],
+  ['#sOutline','outline','#vOutline',''], ['#sBox','box','#vBox',''],
+  ['#sBottom','bottom','#vBottom','%'],   ['#sX','xOffset','#vX','%'],
+  ['#sWidth','width','#vWidth','%'],      ['#sRise','rise','#vRise','%'],
+  ['#sAnim','animMs','#vAnim','ms'],      ['#sPop','popScale','#vPop','%'],
+  ['#sGhost','ghost','#vGhost','%'],
+];
+RANGES.forEach(([id,key,valId,suffix]) => {
+  $(id).oninput = e => {
+    S.style[key] = +e.target.value;
+    $(valId).textContent = e.target.value + suffix;
+    draw(); save();
+  };
+});
+[['sColor','color'],['sOutColor','outlineColor'],['sBoxColor','boxColor']].forEach(([id,key])=>{
+  $('#'+id).oninput = e => { S.style[key] = e.target.value; draw(); save(); };
 });
 $('#sFont').onchange = async e => {
   S.style.font = e.target.value;
   try{ await document.fonts.load(`700 40px "${S.style.font}"`); }catch(_){}
   draw(); save();
 };
-$('#sUpper').onchange = e => { S.style.upper = e.target.checked; draw(); save(); };
+$('#sUpper').onchange  = e => { S.style.upper  = e.target.checked; draw(); save(); };
 $('#sShadow').onchange = e => { S.style.shadow = e.target.checked; draw(); save(); };
 const bindSeg = (id, key, cast=v=>v) => $(id).onclick = e => {
   const b = e.target.closest('button'); if(!b) return;
   [...$(id).children].forEach(x=>x.classList.toggle('on', x===b));
-  S.style[key] = cast(b.dataset.v); draw(); save();
+  S.style[key] = cast(b.dataset.v);
+  if(key === 'mode') syncStyleUI();
+  draw(); save();
 };
 bindSeg('#sWeight','weight', Number);
 bindSeg('#sAlign','align');
+bindSeg('#sMode','mode');
+bindSeg('#sPerLine','perLineColor', v => v === '1');
+$('#sCentre').onclick = () => { S.style.xOffset = 0; syncStyleUI(); draw(); save(); };
+$('#sReset').onclick = () => {
+  if(!confirm('Reset every styling option back to the defaults?')) return;
+  S.style = { ...DEFAULT_STYLE, palette:[...DEFAULT_STYLE.palette] };
+  syncStyleUI(); draw(); save(); toast('Styling reset');
+};
+
+function buildPalette(){
+  const wrap = $('#sPal');
+  wrap.replaceChildren();
+  S.style.palette.forEach((col,i)=>{
+    const inp = document.createElement('input');
+    inp.type = 'color'; inp.value = col; inp.title = `Word colour ${i+1}`;
+    inp.oninput = () => { S.style.palette[i] = inp.value; draw(); save(); };
+    wrap.appendChild(inp);
+  });
+  const less = document.createElement('button');
+  less.className = 'btn ghost sm'; less.textContent = '−'; less.title = 'Fewer colours';
+  less.onclick = () => { if(S.style.palette.length > 1){ S.style.palette.pop(); buildPalette(); draw(); save(); } };
+  const more = document.createElement('button');
+  more.className = 'btn ghost sm'; more.textContent = '+'; more.title = 'Another colour';
+  more.onclick = () => { if(S.style.palette.length < 10){ S.style.palette.push('#ffffff'); buildPalette(); draw(); save(); } };
+  wrap.append(less, more);
+}
 
 const PRESETS = {
-  broadcast:{font:'Archivo',size:5.6,weight:700,upper:false,color:'#ffffff',outline:14,outlineColor:'#000000',box:45,boxColor:'#000000',shadow:true,bottom:7,width:82,align:'center',lineGap:1.22},
-  social:{font:'Archivo',size:8.2,weight:900,upper:true,color:'#ffe66b',outline:26,outlineColor:'#000000',box:0,boxColor:'#000000',shadow:true,bottom:22,width:74,align:'center',lineGap:1.1},
-  netflix:{font:'Arial',size:5,weight:400,upper:false,color:'#ffffff',outline:0,outlineColor:'#000000',box:70,boxColor:'#000000',shadow:false,bottom:8,width:80,align:'center',lineGap:1.25},
-  minimal:{font:'Georgia',size:4.4,weight:400,upper:false,color:'#f4f1ea',outline:8,outlineColor:'#000000',box:0,boxColor:'#000000',shadow:true,bottom:9,width:70,align:'center',lineGap:1.3}
+  broadcast:{mode:'classic',font:'Archivo',size:5.6,weight:700,upper:false,color:'#ffffff',outline:14,outlineColor:'#000000',box:45,boxColor:'#000000',shadow:true,bottom:7,xOffset:0,width:82,align:'center',lineGap:1.22},
+  karaoke:{mode:'pop',font:'Archivo',size:8.4,weight:900,upper:true,color:'#ffffff',outline:30,outlineColor:'#000000',box:0,boxColor:'#000000',shadow:true,bottom:26,xOffset:0,width:76,align:'center',lineGap:1.14,rise:80,animMs:170,popScale:16,ghost:0,perLineColor:false,palette:['#ffe66b','#7ee392','#54d7e8','#ff8fa3','#ffb43d','#c4a5ff']},
+  social:{mode:'classic',font:'Archivo',size:8.2,weight:900,upper:true,color:'#ffe66b',outline:26,outlineColor:'#000000',box:0,boxColor:'#000000',shadow:true,bottom:22,xOffset:0,width:74,align:'center',lineGap:1.1},
+  netflix:{mode:'classic',font:'Arial',size:5,weight:400,upper:false,color:'#ffffff',outline:0,outlineColor:'#000000',box:70,boxColor:'#000000',shadow:false,bottom:8,xOffset:0,width:80,align:'center',lineGap:1.25},
+  minimal:{mode:'classic',font:'Georgia',size:4.4,weight:400,upper:false,color:'#f4f1ea',outline:8,outlineColor:'#000000',box:0,boxColor:'#000000',shadow:true,bottom:9,xOffset:0,width:70,align:'center',lineGap:1.3}
 };
 $('#pane-style').addEventListener('click', e => {
   const p = e.target.closest('[data-preset]'); if(!p) return;
-  Object.assign(S.style, PRESETS[p.dataset.preset]);
-  syncStyleUI(); draw(); save(); toast('Applied the ' + p.textContent.toLowerCase() + ' preset');
+  const preset = PRESETS[p.dataset.preset];
+  Object.assign(S.style, { ...preset, palette: preset.palette ? [...preset.palette] : S.style.palette });
+  syncStyleUI(); draw(); save();
+  toast('Applied the ' + p.textContent.toLowerCase() + ' preset');
 });
+
 function syncStyleUI(){
   const st = S.style;
-  $('#sFont').value = st.font; $('#sSize').value = st.size; $('#vSize').textContent = st.size;
-  $('#sGap').value = st.lineGap; $('#vGap').textContent = st.lineGap;
-  $('#sOutline').value = st.outline; $('#vOutline').textContent = st.outline;
-  $('#sBox').value = st.box; $('#vBox').textContent = st.box;
-  $('#sBottom').value = st.bottom; $('#vBottom').textContent = st.bottom+'%';
-  $('#sWidth').value = st.width; $('#vWidth').textContent = st.width+'%';
-  $('#sColor').value = st.color; $('#sOutColor').value = st.outlineColor; $('#sBoxColor').value = st.boxColor;
-  $('#sUpper').checked = st.upper; $('#sShadow').checked = st.shadow;
+  RANGES.forEach(([id,key,valId,suffix]) => {
+    $(id).value = st[key];
+    $(valId).textContent = st[key] + suffix;
+  });
+  $('#sFont').value = st.font;
+  $('#sColor').value = st.color;
+  $('#sOutColor').value = st.outlineColor;
+  $('#sBoxColor').value = st.boxColor;
+  $('#sUpper').checked = st.upper;
+  $('#sShadow').checked = st.shadow;
   [...$('#sWeight').children].forEach(b=>b.classList.toggle('on', +b.dataset.v === st.weight));
   [...$('#sAlign').children].forEach(b=>b.classList.toggle('on', b.dataset.v === st.align));
+  [...$('#sMode').children].forEach(b=>b.classList.toggle('on', b.dataset.v === st.mode));
+  [...$('#sPerLine').children].forEach(b=>b.classList.toggle('on', (b.dataset.v==='1') === !!st.perLineColor));
+  $('#grpPop').classList.toggle('off', st.mode !== 'pop');
+  $('#modeNote').textContent = st.mode === 'pop'
+    ? 'Words appear one at a time, rising into place, each in its own colour. Burn-in only.'
+    : 'The whole caption appears at once. Exports cleanly to .srt and .vtt as well.';
+  $('#textColourNote').textContent = st.mode === 'pop' ? 'word pop uses the palette below' : '';
+  buildPalette();
   document.fonts?.load(`700 40px "${st.font}"`).catch(()=>{});
 }
 
-/* export bindings */
 const needCues = () => S.cues.length ? true : (toast('There are no cues to export yet', true), false);
 $('#xSRT').onclick = () => needCues() && download(baseName()+'.srt', toSRT(), 'text/plain;charset=utf-8');
 $('#xVTT').onclick = () => needCues() && download(baseName()+'.vtt', toVTT(), 'text/vtt;charset=utf-8');
@@ -1417,17 +1816,18 @@ $('#xTXT').onclick = () => needCues() && download(baseName()+'.txt',
 $('#burnBtn').onclick = () => burnIn(+$('#xScale').value, +$('#xQual').value);
 $('#burnStop').onclick = stopBurn;
 {
-  const m = pickMime();
+  const m = typeof MediaRecorder !== 'undefined' ? pickMime() : '';
   $('#fmtNote').textContent = m
-    ? 'This browser will write ' + (m.startsWith('video/mp4') ? 'MP4 (H.264 + AAC).' : 'WebM (VP9 + Opus) — Chrome or Edge would give you MP4 instead.')
-    : 'This browser has no MediaRecorder, so burn-in is unavailable. Sidecar .srt export still works.';
+    ? 'This browser will write ' + (m.startsWith('video/mp4')
+        ? 'MP4 (H.264 + AAC).' : 'WebM (VP9 + Opus) — Chrome or Edge would give you MP4.')
+    : 'This browser has no MediaRecorder, so burn-in is unavailable. .srt export still works.';
 }
 
-/* ASR options live in the cues bar */
+/* ---- ASR settings ---- */
 {
   const bar = document.createElement('div');
   bar.className = 'grp';
-  bar.style.cssText = 'border-top:1px solid var(--line);border-bottom:none;padding:11px 13px 13px';
+  bar.style.cssText = 'border-top:1px solid var(--line);border-bottom:none';
   bar.innerHTML = `
     <span class="lbl">Auto-transcribe settings</span>
     <div class="row"><label>Model</label><div class="f">
@@ -1439,14 +1839,22 @@ $('#burnStop').onclick = stopBurn;
     <div class="row"><label>Output</label><div class="f">
       <div class="seg" id="aTask"><button data-v="0" class="on">ORIGINAL</button><button data-v="1">TRANSLATE → EN</button></div>
     </div></div>
+    <div class="row"><label>Word timing</label><div class="f">
+      <input type="checkbox" id="aWords" checked><span class="hint">needed for word pop</span>
+    </div></div>
+    <div class="row"><label>Words / line</label><div class="f">
+      <input type="range" id="aPer" min="1" max="12" step="1" value="5"><span class="val" id="vPer">5</span>
+    </div></div>
     <div class="row"><label>Use GPU</label><div class="f">
       <input type="checkbox" id="aGpu" checked><span class="hint" id="gpuNote"></span>
     </div></div>`;
   $('#pane-cues').appendChild(bar);
-  $('#gpuNote').textContent = navigator.gpu ? 'WebGPU available — much faster' : 'no WebGPU here; CPU will be slow';
+  $('#gpuNote').textContent = navigator.gpu ? 'WebGPU available' : 'no WebGPU — CPU will be slow';
   $('#aModel').onchange = e => asrPrefs.model = e.target.value;
   $('#aLang').onchange  = e => asrPrefs.lang  = e.target.value;
   $('#aGpu').onchange   = e => asrPrefs.gpu   = e.target.checked;
+  $('#aWords').onchange = e => asrPrefs.words = e.target.checked;
+  $('#aPer').oninput    = e => { asrPrefs.perLine = +e.target.value; $('#vPer').textContent = e.target.value; };
   $('#aTask').onclick = e => {
     const b = e.target.closest('button'); if(!b) return;
     [...$('#aTask').children].forEach(x=>x.classList.toggle('on', x===b));
@@ -1455,7 +1863,7 @@ $('#burnStop').onclick = stopBurn;
 }
 
 /* =====================================================================
-   TABS · MODAL · SHORTCUTS · PERSISTENCE
+   TABS · SHORTCUTS · PERSISTENCE
    ===================================================================== */
 function switchTab(name){
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name));
@@ -1463,16 +1871,21 @@ function switchTab(name){
 }
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if(b) switchTab(b.dataset.tab); };
 $('#btnKeys').onclick = () => $('#modalKeys').classList.add('on');
-$('#modalKeys').onclick = e => { if(e.target.id==='modalKeys' || e.target.hasAttribute('data-close')) $('#modalKeys').classList.remove('on'); };
+$('#modalKeys').onclick = e => {
+  if(e.target.id==='modalKeys' || e.target.hasAttribute('data-close')) $('#modalKeys').classList.remove('on');
+};
 
 addEventListener('keydown', e => {
-  if($('#modalKeys').classList.contains('on') && e.key === 'Escape') return $('#modalKeys').classList.remove('on');
-  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+  if(e.key === 'Escape'){
+    if(drag) return endDrag(false);
+    $('#modalKeys').classList.remove('on');
+  }
   if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 's'){
-    e.preventDefault(); if(S.cues.length) download(baseName()+'.srt', toSRT(), 'text/plain;charset=utf-8');
+    e.preventDefault();
+    if(S.cues.length) download(baseName()+'.srt', toSRT(), 'text/plain;charset=utf-8');
     return;
   }
-  if(typing) return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   const k = e.key.toLowerCase();
   if(e.code === 'Space'){ e.preventDefault(); togglePlay(); }
   else if(e.key === 'ArrowLeft'){ e.preventDefault(); seek(video.currentTime - (e.altKey?0.1:e.shiftKey?5:1)); }
@@ -1486,25 +1899,48 @@ addEventListener('keydown', e => {
   }
 });
 
-const KEY = 'subdeck.v1';
+/* ---- persistence: styling is global, cues are per video file ---- */
+const KEY = 'subdeck.v2';
 let saveT;
+function readStore(){
+  try{ return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(_){ return {}; }
+}
 function save(){
   clearTimeout(saveT);
   saveT = setTimeout(()=>{
-    try{ localStorage.setItem(KEY, JSON.stringify({ cues:S.cues, style:S.style, name:S.file?.name||'' })); }catch(_){}
+    try{
+      const store = readStore();
+      store.style = S.style;
+      store.projects = store.projects || {};
+      if(S.file){
+        if(S.cues.length) store.projects[S.file.name] = { cues:S.cues, at:Date.now() };
+        else delete store.projects[S.file.name];
+        // keep the 20 most recent so localStorage cannot grow without bound
+        const names = Object.keys(store.projects)
+          .sort((a,b)=>(store.projects[b].at||0)-(store.projects[a].at||0));
+        names.slice(20).forEach(n => delete store.projects[n]);
+      }
+      store.last = S.file?.name || store.last;
+      localStorage.setItem(KEY, JSON.stringify(store));
+    }catch(err){ console.warn('save failed', err); }
   }, 400);
 }
-function restore(){
-  try{
-    const d = JSON.parse(localStorage.getItem(KEY) || 'null');
-    if(!d) return;
-    if(d.style) Object.assign(S.style, d.style);
-    if(Array.isArray(d.cues) && d.cues.length){
-      S.cues = d.cues;
-      toast(`Restored ${d.cues.length} cues from your last session${d.name ? ' · '+d.name : ''}`);
-    }
-  }catch(_){}
+function loadProject(name){
+  const p = readStore().projects?.[name];
+  if(!p || !Array.isArray(p.cues)) return null;
+  return p.cues.map(c => ({ ...c, id: c.id || uid() }));
 }
+function restore(){
+  const store = readStore();
+  if(store.style){
+    S.style = { ...DEFAULT_STYLE, ...store.style };
+    if(!Array.isArray(S.style.palette) || !S.style.palette.length)
+      S.style.palette = [...DEFAULT_STYLE.palette];
+  }
+  const n = store.last && store.projects?.[store.last]?.cues?.length;
+  if(n) setTimeout(()=>toast(`${n} saved cues waiting for "${store.last}" — load that video to see them`), 900);
+}
+
 restore(); syncStyleUI(); renderCues(); drawTimeline();
 
 addEventListener('beforeunload', e => {

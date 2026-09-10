@@ -44,9 +44,25 @@ so later runs work offline. Handles ~30 languages and can translate to English.
 a caption, drag an edge to trim it. Type timecodes directly, split a cue at the
 playhead, merge it into the next one. Overlaps and zero-length cues get flagged.
 
-**Style** — font, size, weight, colour, outline, background plate, position and
-max width, plus four presets. The preview is drawn by the same canvas code that
-writes the export, so what you see is exactly what gets encoded.
+**Style** — two caption modes:
+
+- *Classic* — the whole line appears at once. Exports to `.srt`/`.vtt` too.
+- *Word pop* — words rise up into place one at a time as they're spoken, each in
+  its own colour from an editable palette. Driven by Whisper's word-level
+  timings; on hand-typed cues the words are spaced evenly across the cue.
+  Burn-in only, since `.srt` has no way to express it.
+
+Both give you font, size, weight, text colour, outline colour and width,
+background plate colour and opacity, alignment, height, sideways offset and max
+width — plus five presets. **You can also just drag the caption around on the
+video** to place it; the sliders follow.
+
+The preview is drawn by the same canvas code that writes the export, so what you
+see is exactly what gets encoded.
+
+**Multiple videos** — load as many as you like, one after another. Cues are saved
+per filename (the 20 most recent), so switching back to an earlier video brings
+its captions back. Styling is shared across all of them.
 
 **Export**
 - `.srt`, `.vtt`, or a plain transcript — instant.

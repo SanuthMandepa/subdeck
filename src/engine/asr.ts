@@ -74,7 +74,89 @@ function pinOrtRuntime(env: {
   wasm.wasmPaths = { mjs: `${base}${stem}.mjs`, wasm: `${base}${stem}.wasm` };
 }
 
-async function chooseDevice(preferGpu: boolean): Promise<'webgpu' | 'wasm'> {
+/**
+ * Quantisations to try, in order, per device.
+ *
+ * There is no way to ask ahead of time whether a given model export will load
+ * on a given execution provider — you find out when the session fails to
+ * build. The community Whisper exports are not consistent about this: on the
+ * CPU provider, `q8` on some repos trips the QDQ optimiser with
+ * "TransposeDQWeightsForMatMulNBits ... missing required scale", because the
+ * weights are actually block-quantised to 4 bits whatever the filename says.
+ * The same file loads fine on WebGPU, which never runs that transform.
+ *
+ * So: try the fast one, fall back to the one that always works. `fp32` is a
+ * bigger download but needs no quantisation fix-ups at all, which makes it the
+ * reliable floor.
+ */
+type Quant = 'fp32' | 'fp16' | 'q8' | 'q4' | 'q4f16';
+type DtypeMap = { encoder_model: Quant; decoder_model_merged: Quant };
+
+const DTYPES: Record<Device, ReadonlyArray<DtypeMap>> = {
+  webgpu: [
+    { encoder_model: 'fp32', decoder_model_merged: 'q4' },
+    { encoder_model: 'fp32', decoder_model_merged: 'fp32' },
+  ],
+  wasm: [
+    { encoder_model: 'fp32', decoder_model_merged: 'q8' },
+    { encoder_model: 'fp32', decoder_model_merged: 'fp32' },
+    { encoder_model: 'fp32', decoder_model_merged: 'q4' },
+  ],
+};
+
+type Device = 'webgpu' | 'wasm';
+
+/** Build the pipeline, walking the quantisation list until one loads. */
+async function loadPipeline(
+  TJS: typeof import('@huggingface/transformers'),
+  model: string,
+  device: Device,
+): Promise<Pipeline> {
+  const candidates = DTYPES[device];
+  let lastErr: unknown;
+
+  for (let i = 0; i < candidates.length; i++) {
+    const dtype = candidates[i] as DtypeMap;
+    const files: Record<string, number> = {};
+    const label = dtype.decoder_model_merged;
+
+    try {
+      return (await TJS.pipeline('automatic-speech-recognition', model, {
+        device,
+        dtype,
+        progress_callback: (p: { status?: string; file?: string; loaded?: number; total?: number }) => {
+          if (p.status === 'progress' && p.total) {
+            files[p.file ?? ''] = (p.loaded ?? 0) / p.total;
+            const vals = Object.values(files);
+            snap().setStatus({
+              msg: 'downloading model',
+              pct: (vals.reduce((a, b) => a + b, 0) / vals.length) * 100,
+              sub: (p.file ?? '').split('/').pop() ?? '',
+              cancellable: true,
+            });
+          } else if (p.status === 'ready') {
+            snap().setStatus({ msg: 'model ready', pct: 100, sub: '', cancellable: true });
+          }
+        },
+      })) as unknown as Pipeline;
+    } catch (err) {
+      lastErr = err;
+      if (snap().cancelASR) throw err;
+      const next = candidates[i + 1];
+      if (!next) break;
+      console.warn(`${label} failed to load on ${device}, falling back`, err);
+      snap().setStatus({
+        msg: `retrying · ${next.decoder_model_merged}`,
+        pct: 0,
+        sub: `${label} is not supported on this device`,
+        cancellable: true,
+      });
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+}
+
+async function chooseDevice(preferGpu: boolean): Promise<Device> {
   if (!preferGpu || !navigator.gpu) return 'wasm';
   try {
     return (await navigator.gpu.requestAdapter()) ? 'webgpu' : 'wasm';
@@ -127,29 +209,7 @@ export async function autoTranscribe(): Promise<void> {
         /* nothing to dispose */
       }
       transcriber = null;
-
-      const files: Record<string, number> = {};
-      transcriber = (await TJS.pipeline('automatic-speech-recognition', prefs.model, {
-        device,
-        dtype:
-          device === 'webgpu'
-            ? { encoder_model: 'fp32', decoder_model_merged: 'q4' }
-            : { encoder_model: 'fp32', decoder_model_merged: 'q8' },
-        progress_callback: (p: { status?: string; file?: string; loaded?: number; total?: number }) => {
-          if (p.status === 'progress' && p.total) {
-            files[p.file ?? ''] = (p.loaded ?? 0) / p.total;
-            const vals = Object.values(files);
-            snap().setStatus({
-              msg: 'downloading model',
-              pct: (vals.reduce((a, b) => a + b, 0) / vals.length) * 100,
-              sub: (p.file ?? '').split('/').pop() ?? '',
-              cancellable: true,
-            });
-          } else if (p.status === 'ready') {
-            snap().setStatus({ msg: 'model ready', pct: 100, sub: '', cancellable: true });
-          }
-        },
-      })) as unknown as Pipeline;
+      transcriber = await loadPipeline(TJS, prefs.model, device);
       loadedKey = key;
     }
     if (snap().cancelASR) throw new Error('cancelled');

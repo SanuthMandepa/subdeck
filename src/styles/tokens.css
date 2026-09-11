@@ -1,0 +1,31 @@
+/* ============================================================
+   SUBDECK — signal-deck aesthetic
+   graphite chassis · amber signal · phosphor readouts
+   ============================================================ */
+:root {
+  --ink: #0a0b0d;
+  --chassis: #101216;
+  --panel: #15181d;
+  --panel-hi: #1c2027;
+  --line: #252a33;
+  --line-hi: #39414e;
+  --text: #e9e5dc;
+  --dim: #868d99;
+  --dimmer: #5b6270;
+  --amber: #ffb43d;
+  --amber-deep: #b3720c;
+  --amber-hi: #ffc663;
+  --on-amber: #17120a;
+  --cyan: #54d7e8;
+  --red: #ff5340;
+  --red-soft: #ff8a7a;
+  --red-line: #5e2b25;
+  --green: #7ee392;
+
+  --r: 3px;
+  --mono: 'Chivo Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+
+  --header-h: 46px;
+  --rack-w: 408px;
+}

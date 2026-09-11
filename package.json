@@ -6,9 +6,10 @@
   "description": "A subtitle editor that runs entirely in your browser.",
   "license": "MIT",
   "scripts": {
+    "start": "vite --open",
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --open",
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",

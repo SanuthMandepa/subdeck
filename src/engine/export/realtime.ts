@@ -58,8 +58,8 @@ export async function burnRealtime(
   audioTracks.forEach((t) => stream.addTrack(t));
 
   const chunks: Blob[] = [];
-  let raf = 0;
-  let guard: ReturnType<typeof setInterval> | undefined;
+  // Held in one object so `stop` can clear both without being declared after them.
+  const timers = { raf: 0, guard: undefined as ReturnType<typeof setInterval> | undefined };
   let stopped = false;
   let lastUI = 0;
 
@@ -101,14 +101,14 @@ export async function burnRealtime(
   const pump = () => {
     if (stopped) return;
     paint();
-    raf = requestAnimationFrame(pump);
+    timers.raf = requestAnimationFrame(pump);
   };
 
   const stop: StopFn = () => {
     if (stopped) return;
     stopped = true;
-    cancelAnimationFrame(raf);
-    clearInterval(guard);
+    cancelAnimationFrame(timers.raf);
+    clearInterval(timers.guard);
     try {
       video.pause();
     } catch {
@@ -127,7 +127,7 @@ export async function burnRealtime(
   // so this keeps frames moving and guarantees the run terminates.
   let stall = 0;
   let lastT = -1;
-  guard = setInterval(() => {
+  timers.guard = setInterval(() => {
     if (stopped) return;
     paint();
     const live = snap();
@@ -146,12 +146,12 @@ export async function burnRealtime(
 
   video.removeEventListener('ended', stop);
   stopped = true;
-  cancelAnimationFrame(raf);
-  clearInterval(guard);
+  cancelAnimationFrame(timers.raf);
+  clearInterval(timers.guard);
 
   if (!chunks.length) throw new Error('the recorder produced no data');
   const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
-  const blob = new Blob(chunks, { type: mime.split(';')[0] });
+  const blob = new Blob(chunks, { type: mime.split(';')[0] ?? mime });
   const name = `${baseName}-subtitled.${ext}`;
   download(name, blob);
   s.notify(`Saved ${name} · ${megabytes(blob.size)}`);

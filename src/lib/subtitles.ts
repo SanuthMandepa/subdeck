@@ -26,7 +26,8 @@ const CUE_RE =
 
 /** Parse SubRip or WebVTT. Tolerant: unknown cue settings and tags are dropped. */
 export function parseSubs(txt: string): Cue[] {
-  const clean = txt.replace(/^﻿/, '').replace(/\r/g, '');
+  // Strip a leading byte-order mark; some editors add one to .srt files.
+  const clean = (txt.charCodeAt(0) === 0xfeff ? txt.slice(1) : txt).replace(/\r/g, '');
   const out: Cue[] = [];
   const re = new RegExp(CUE_RE.source, 'g');
   let m: RegExpExecArray | null;

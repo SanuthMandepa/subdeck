@@ -6,7 +6,7 @@ export const uid = (): string => Math.random().toString(36).slice(2);
 export const idle = (): Promise<void> => new Promise((r) => setTimeout(r, 0));
 
 export function download(name: string, data: Blob | string, type?: string): void {
-  const blob = data instanceof Blob ? data : new Blob([data], { type });
+  const blob = data instanceof Blob ? data : new Blob([data], type ? { type } : undefined);
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = name;

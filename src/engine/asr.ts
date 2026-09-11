@@ -47,6 +47,33 @@ type Pipeline = ((audio: Float32Array, opts: Record<string, unknown>) => Promise
 let transcriber: Pipeline | null = null;
 let loadedKey = '';
 
+/**
+ * Point the ONNX runtime at a version-pinned copy on jsDelivr.
+ *
+ * transformers.js does this by default, but only when a couple of conditions
+ * hold. Setting it ourselves makes it unconditional, which matters twice over:
+ * it is the only thing that stops a stale or mismatched runtime being picked
+ * up, and it guarantees ORT's bundled-wasm fallback is never taken — which is
+ * what lets the build strip that 22 MB file entirely (see vite.config.ts).
+ *
+ * jsDelivr rather than our own origin so the wasm costs the host no bandwidth;
+ * COEP is `credentialless`, so the cross-origin fetch is allowed.
+ */
+function pinOrtRuntime(env: {
+  versions?: { web?: string };
+  backends?: { onnx?: { wasm?: { wasmPaths?: unknown } } };
+}): void {
+  const wasm = env.backends?.onnx?.wasm;
+  const version = env.versions?.web;
+  if (!wasm || !version) return;
+
+  const base = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${version}/dist/`;
+  // Safari has no asyncify support in the threaded build; everyone else does.
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const stem = isSafari ? 'ort-wasm-simd-threaded' : 'ort-wasm-simd-threaded.asyncify';
+  wasm.wasmPaths = { mjs: `${base}${stem}.mjs`, wasm: `${base}${stem}.wasm` };
+}
+
 async function chooseDevice(preferGpu: boolean): Promise<'webgpu' | 'wasm'> {
   if (!preferGpu || !navigator.gpu) return 'wasm';
   try {
@@ -88,6 +115,7 @@ export async function autoTranscribe(): Promise<void> {
   try {
     const TJS = await import('@huggingface/transformers');
     TJS.env.allowLocalModels = false;
+    pinOrtRuntime(TJS.env);
 
     const device = await chooseDevice(prefs.gpu);
     const key = `${prefs.model}|${device}`;

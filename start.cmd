@@ -3,23 +3,20 @@ title Subdeck
 cd /d "%~dp0"
 
 where node >nul 2>&1
-if %errorlevel%==0 (
-    node serve.mjs %*
+if not %errorlevel%==0 (
+    echo.
+    echo   Node.js is required to run Subdeck from source.
+    echo   Install it from https://nodejs.org and run this again.
+    echo.
+    pause
     goto :eof
 )
 
-where py >nul 2>&1
-if %errorlevel%==0 (
-    echo Node.js not found - falling back to Python ^(no cross-origin isolation^).
-    start "" http://localhost:8080/
-    py -m http.server 8080
-    goto :eof
+if not exist "node_modules" (
+    echo Installing dependencies, one moment...
+    call npm install || goto :eof
 )
 
-echo.
-echo   Neither Node.js nor Python was found.
-echo   Opening index.html directly - everything works except that
-echo   CPU transcription will be slower.
-echo.
-start "" "%~dp0index.html"
-pause
+REM `npm run dev` serves with the COOP/COEP headers that switch on
+REM cross-origin isolation - see vite.config.ts for why that matters.
+call npm run dev -- --open

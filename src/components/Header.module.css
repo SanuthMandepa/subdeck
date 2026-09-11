@@ -1,0 +1,119 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  height: var(--header-h);
+  flex: none;
+  background: linear-gradient(180deg, #171a20, #101216);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--amber-deep), transparent 42%);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  user-select: none;
+}
+.brand b {
+  font-family: var(--sans);
+  font-weight: 900;
+  font-variation-settings: 'wdth' 118;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+}
+.brand b i {
+  font-style: normal;
+  color: var(--amber);
+}
+.brand span {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--dimmer);
+  text-transform: uppercase;
+}
+
+.slot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0b0d10;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 5px 11px;
+  height: 28px;
+  cursor: pointer;
+  text-align: left;
+}
+.slot:hover {
+  border-color: var(--line-hi);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #333a45;
+  flex: none;
+}
+.slot.live .dot {
+  background: var(--green);
+  box-shadow: 0 0 8px #7ee39288;
+}
+.fname {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dimmer);
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  padding: 0;
+  border-radius: var(--r);
+  border: 1px solid var(--line);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s;
+}
+.icon:hover:not(:disabled) {
+  background: var(--panel-hi);
+  border-color: var(--line-hi);
+  color: var(--text);
+}
+.icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

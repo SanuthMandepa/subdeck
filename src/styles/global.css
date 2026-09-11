@@ -1,0 +1,233 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A fine grain over everything, so the flat panels read as a physical surface. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+#root {
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a303a;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a424f;
+}
+
+/* ---------------- shared primitives ---------------- */
+.lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dimmer);
+  font-weight: 600;
+}
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.hint {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--dimmer);
+  letter-spacing: 0.06em;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 13px;
+  height: 30px;
+  border-radius: var(--r);
+  background: var(--panel-hi);
+  border: 1px solid var(--line-hi);
+  color: var(--text);
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s,
+    transform 0.06s;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  background: #252b34;
+  border-color: #4b5566;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.34;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn.amber {
+  background: var(--amber);
+  color: var(--on-amber);
+  border-color: var(--amber);
+  font-weight: 700;
+}
+.btn.amber:hover:not(:disabled) {
+  background: var(--amber-hi);
+  border-color: var(--amber-hi);
+}
+.btn.ghost {
+  background: transparent;
+  border-color: var(--line);
+}
+.btn.ghost:hover:not(:disabled) {
+  background: var(--panel-hi);
+}
+.btn.red {
+  background: transparent;
+  border-color: var(--red-line);
+  color: var(--red-soft);
+}
+.btn.red:hover:not(:disabled) {
+  background: #2a1512;
+  border-color: var(--red);
+  color: var(--red);
+}
+.btn.sm {
+  height: 24px;
+  padding: 0 9px;
+  font-size: 9.5px;
+}
+
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role='button']:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+input,
+select,
+textarea {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  background: #0b0d10;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 5px 7px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--line-hi);
+  outline: none;
+}
+select {
+  cursor: pointer;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  padding: 0;
+  border: none;
+  height: 16px;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--line-hi);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--amber);
+  margin-top: -4.5px;
+}
+input[type='range']::-moz-range-track {
+  height: 2px;
+  background: var(--line-hi);
+}
+input[type='range']::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: var(--amber);
+}
+input[type='color'] {
+  padding: 0;
+  width: 30px;
+  height: 22px;
+  border: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  flex: none;
+}
+input[type='checkbox'] {
+  accent-color: var(--amber);
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

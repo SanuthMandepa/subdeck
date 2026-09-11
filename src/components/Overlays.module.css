@@ -1,0 +1,77 @@
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 0);
+  background: var(--panel-hi);
+  border: 1px solid var(--line-hi);
+  border-left: 2px solid var(--amber);
+  padding: 9px 16px;
+  border-radius: var(--r);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  z-index: 200;
+  box-shadow: 0 16px 40px -12px #000;
+  max-width: 70vw;
+  pointer-events: none;
+  animation: rise 0.2s ease-out;
+}
+.bad {
+  border-left-color: var(--red);
+  color: #ffb3a8;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 7px 14px;
+  align-items: center;
+  font-size: 12px;
+}
+.keys kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: #0b0d10;
+  border: 1px solid var(--line-hi);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 2px 6px;
+  color: var(--text);
+  white-space: nowrap;
+  justify-self: start;
+}
+.keys span {
+  color: var(--dim);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px 14px;
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+.facts dt {
+  color: var(--dimmer);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: center;
+}
+.facts dd {
+  margin: 0;
+  color: var(--dim);
+}

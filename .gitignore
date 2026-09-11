@@ -1,16 +1,15 @@
-node_modules/
-.vercel
+node_modules
+dist
+dist-ssr
+*.local
+
 .DS_Store
 Thumbs.db
-*.log
 
-# sample media / exports — don't commit videos
-*.mp4
-*.webm
-*.mkv
-*.mov
-*.m4v
-*.avi
-*.mp3
-*.wav
-*.m4a
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -75,6 +75,8 @@ export interface AppState {
   sel: number;
   liveIndex: number;
   style: CaptionStyle;
+  /** Cue whose text box should take focus on the next render, then clear. */
+  focusId: string | null;
 
   /* timeline view */
   zoom: number;
@@ -120,6 +122,7 @@ export interface AppActions {
   setCues: (cues: Cue[], opts?: { select?: number; history?: boolean }) => void;
   select: (i: number) => void;
   setLive: (i: number) => void;
+  setFocus: (id: string | null) => void;
   addCue: (start: number, end: number) => string;
   updateCue: (id: string, patch: Partial<Cue>) => void;
   retime: (id: string, patch: { start?: number; end?: number }) => void;
@@ -178,6 +181,7 @@ export const useStore = create<AppState & AppActions>((set, get) => ({
   sel: -1,
   liveIndex: -1,
   style: loadStyle(),
+  focusId: null,
 
   zoom: 0,
   view: 0,
@@ -269,12 +273,13 @@ export const useStore = create<AppState & AppActions>((set, get) => ({
 
   select: (sel) => set({ sel }),
   setLive: (liveIndex) => set({ liveIndex }),
+  setFocus: (focusId) => set({ focusId }),
 
   addCue: (start, end) => {
     const cue: Cue = { id: uid(), start, end, text: '', words: null };
     get().commit();
     const cues = sorted([...get().cues, cue]);
-    set({ cues, sel: cues.indexOf(cue) });
+    set({ cues, sel: cues.indexOf(cue), focusId: cue.id });
     get().save();
     return cue.id;
   },

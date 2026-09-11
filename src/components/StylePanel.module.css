@@ -1,0 +1,11 @@
+.palette {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.palette input[type='color'] {
+  width: 34px;
+  height: 26px;
+}

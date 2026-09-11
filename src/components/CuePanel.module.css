@@ -1,0 +1,196 @@
+.bar {
+  display: flex;
+  gap: 7px;
+  padding: 9px 11px;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--chassis);
+  z-index: 5;
+  flex-wrap: wrap;
+}
+
+.list {
+  padding: 7px 9px 20px;
+}
+
+.cue {
+  border: 1px solid var(--line);
+  border-left: 2px solid #2b323d;
+  border-radius: var(--r);
+  background: var(--panel);
+  margin-bottom: 6px;
+  padding: 7px 9px;
+  transition:
+    border-color 0.12s,
+    background 0.12s;
+}
+.cue:hover {
+  border-color: var(--line-hi);
+}
+.sel {
+  border-color: var(--line-hi);
+  border-left-color: var(--cyan);
+  background: var(--panel-hi);
+}
+.live {
+  border-left-color: var(--amber);
+  box-shadow: inset 3px 0 12px -6px var(--amber);
+}
+.bad {
+  border-left-color: var(--red);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.num {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--dimmer);
+  min-width: 22px;
+  font-weight: 600;
+}
+.time {
+  width: 88px;
+  text-align: center;
+  font-size: 10.5px;
+  padding: 3px 2px;
+}
+.arrow {
+  color: var(--dimmer);
+  font-size: 10px;
+}
+.dur {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--dimmer);
+  margin-left: auto;
+  padding-right: 2px;
+}
+.wordTag {
+  color: var(--cyan);
+  font-size: 9px;
+  margin-left: auto;
+  font-family: var(--mono);
+}
+.acts {
+  display: flex;
+  gap: 3px;
+}
+.icb {
+  width: 21px;
+  height: 21px;
+  border-radius: 2px;
+  display: grid;
+  place-items: center;
+  color: var(--dimmer);
+  border: 1px solid transparent;
+  transition: all 0.1s;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 0;
+}
+.icb:hover {
+  background: #0b0d10;
+  border-color: var(--line-hi);
+  color: var(--text);
+}
+.del:hover {
+  color: var(--red);
+  border-color: var(--red-line);
+}
+.cue textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 38px;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.4;
+  padding: 6px 7px;
+}
+.warn {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--red);
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.blank {
+  padding: 52px 26px;
+  text-align: center;
+  color: var(--dimmer);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.blank b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--dim);
+  margin-bottom: 9px;
+}
+
+/* ---------------- job status ---------------- */
+.status {
+  margin: 11px 13px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: #0b0d10;
+}
+.statusTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.statusMsg {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  text-transform: uppercase;
+}
+.statusPct {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+.track {
+  height: 3px;
+  background: #1b2027;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  background: var(--amber);
+  width: 0;
+  transition: width 0.18s ease-out;
+  box-shadow: 0 0 10px #ffb43d66;
+}
+.rec i {
+  background: var(--red);
+  box-shadow: 0 0 10px #ff534066;
+}
+.statusSub {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--dimmer);
+  margin-top: 7px;
+  line-height: 1.5;
+  word-break: break-word;
+  max-height: 56px;
+  overflow: hidden;
+}
+.statusFoot {
+  margin-top: 9px;
+}

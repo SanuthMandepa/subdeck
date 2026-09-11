@@ -1,0 +1,60 @@
+.tl {
+  flex: none;
+  background: var(--ink);
+  border-top: 1px solid var(--line);
+  padding: 8px 14px 11px;
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+.zoom {
+  display: flex;
+  gap: 1px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.zoom button {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  background: var(--panel);
+  color: var(--dim);
+  transition:
+    background 0.1s,
+    color 0.1s;
+}
+.zoom button.on {
+  background: var(--amber);
+  color: var(--on-amber);
+  font-weight: 700;
+}
+.zoom button:hover:not(.on) {
+  background: var(--panel-hi);
+  color: var(--text);
+}
+
+.wrap {
+  position: relative;
+  height: 92px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: #080a0c;
+  overflow: hidden;
+}
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+@media (max-width: 980px) {
+  .tl {
+    display: none;
+  }
+}

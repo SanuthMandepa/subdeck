@@ -1,0 +1,41 @@
+.rack {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--chassis);
+}
+.tabs {
+  display: flex;
+  flex: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--ink);
+}
+.tabs button {
+  flex: 1;
+  padding: 11px 4px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dimmer);
+  border-bottom: 2px solid transparent;
+  transition: color 0.12s;
+}
+.tabs button:hover {
+  color: var(--dim);
+}
+.tabs button.on {
+  color: var(--text);
+  border-bottom-color: var(--amber);
+  background: var(--chassis);
+}
+.count {
+  font-size: 9px;
+  color: var(--dimmer);
+  margin-left: 5px;
+}
+.pane {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
